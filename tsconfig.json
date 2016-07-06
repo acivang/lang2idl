@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "noImplicitAny": true,
+        "preserveConstEnums": true,
+        "outDir": "dist",
+        "sourceMap": true,
+        "target": "es6"
+    },
+    "exclude": [
+        "node_modules",
+        "dist",
+        "typings/index.d.ts",
+        "typings/modules"
+    ],
+    "compileOnSave": false
+}

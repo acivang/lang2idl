@@ -1,0 +1,34 @@
+{
+    "name": "lang2idl",
+    "version": "0.0.1",
+    "description": "programming language interface to idl",
+    "main": "index.js",
+    "scripts": {
+        "test": "test",
+        "groovy2idl": "node ./dist/index.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/acivang/lang2idl.git"
+    },
+    "keywords": [
+        "idl",
+        "groovy",
+        "typescript",
+        "c#",
+        "json"
+    ],
+    "author": "aci",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/acivang/lang2idl/issues"
+    },
+    "homepage": "https://github.com/acivang/lang2idl#readme",
+    "dependencies": {
+        "typescript": "^1.8.10"
+    },
+    "preferGlobal": true,
+    "bin": {
+        //"groovy2idl": "./dist/index.js"
+    }
+}
