@@ -1,5 +1,7 @@
 import * as fileStream  from 'fs';
 
+import * as type from './utile/type';
+
 let rpcPackage: string = 'org.nofdev.rpc.';
 
 export function convert(path: string) {
@@ -34,7 +36,6 @@ export function convert(path: string) {
 
       var itemType = getType(code);
       idl.types.push(itemType);
-
     }
 
   }
@@ -183,7 +184,7 @@ function getType(code: string): any {
     var tmp = properties[i].replace('\n', '').split(' ');
     var property = {
       name: tmp[1],
-      type: tmp[0],
+      type: type.toIdlType(tmp[0]),
       doc: propertyDoc[i].match(/\* ((\s*?.*?)*?)\n/g)[0].replace(/\* |\n/g, '')
     };
     itemType.properties.push(property);

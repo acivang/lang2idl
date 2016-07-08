@@ -5,7 +5,8 @@
     "main": "index.js",
     "scripts": {
         "test": "test",
-        "groovy2idl": "node ./dist/index.js"
+        "groovy2idl": "tsc & node ./dist/index.js groovy2idl ",
+        "cs2idl": "tsc & node ./dist/index.js cs2idl "
     },
     "repository": {
         "type": "git",
@@ -29,6 +30,7 @@
     },
     "preferGlobal": true,
     "bin": {
-        //"groovy2idl": "./dist/index.js"
+        "groovy2idl": "./dist/index.js groovy2idl ",
+        "cs2idl": "./dist/index.js cs2idl "
     }
 }
