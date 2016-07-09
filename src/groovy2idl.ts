@@ -218,22 +218,18 @@ function getTypeParam(typeCode: string, code: string, packageName?: string): any
       typeTmp[1] = typeTmp[1].replace(/\>| /g, '');
       if (typeTmp[1].indexOf(',') > -1) {
         var tmpPropTypeParams = typeTmp[1].split(',');
-        propTypeParams.push(getTypeParam(tmpPropTypeParams[0], code, packageName));
-        propTypeParams.push(getTypeParam(tmpPropTypeParams[1], code, packageName));
+        propTypeParams.push(getTypeWithPackage(tmpPropTypeParams[0], code, packageName));
+        propTypeParams.push(getTypeWithPackage(tmpPropTypeParams[1], code, packageName));
       }
       else {
-        propTypeParams.push(getTypeParam(typeTmp[1], code, packageName));
+        propTypeParams.push(getTypeWithPackage(typeTmp[1], code, packageName));
       }
     } else {
       propType = typeCode;
     }
-    var packageReg = new RegExp(`import ((\s*?.*?)*?)${propType}`);
-    var thisPackage = code.match(packageReg);
-    if(thisPackage){
-      propType = thisPackage[0].split(' ')[1];
-    }else{
-      propType = `${packageName}.` + propType;
-    }
+      
+    propType = getTypeWithPackage(propType, code, packageName);
+    
   }
   if (propTypeParams.length > 0) {
     return {
@@ -244,4 +240,15 @@ function getTypeParam(typeCode: string, code: string, packageName?: string): any
   return {
     type: propType
   }
+}
+
+function getTypeWithPackage(type: string, code: string, packageName: string): string{
+
+    var packageReg = new RegExp(`import ((\s*?.*?)*?)${type}`);
+    var thisPackage = code.match(packageReg);
+    if(thisPackage){
+      return thisPackage[0].split(' ')[1];
+    }
+      
+      return `${packageName}.` + type;
 }
