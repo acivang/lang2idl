@@ -16,7 +16,9 @@ var IdlTypeDictionary: { [type: string]: string} = {
   ['boolean']:'boolean',
   ['offsetdatetime']:'date',
   ['datetime']:'Date',
-  ['list']:'array'
+  ['list']:'array',
+  ['void']: 'viod',
+  ['def']: 'void'
 };
 
 export function toIdlType(type:string): string{

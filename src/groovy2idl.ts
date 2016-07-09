@@ -4,7 +4,7 @@ import * as type from './utile/type';
 
 let rpcPackage: string = 'org.nofdev.rpc.';
 
-export function convert(path: string) {
+export function convert(path: string): void {
   var isDir: boolean = false;
   if (path.lastIndexOf('.groovy') < 0 || path.lastIndexOf('*.groovy') > 0) {
     isDir = true;
@@ -93,14 +93,14 @@ function getInterface(code: string): any {
   }
   var methods = methodCode[0].match(/\/\*\*((\s*?.*?)*?)\)/g);
   for (var i in methods) {
-    var method = getMethod(methods[i]);
+    var method = getMethod(methods[i], itemInterface.package);
     itemInterface.methods.push(method);
   }
 
   return itemInterface;
 }
 
-function getMethod(code: string): any {
+function getMethod(code: string, packageName: string): any {
   var method = {
     name: '',
     doc: '',
@@ -120,6 +120,7 @@ function getMethod(code: string): any {
   }
   method.name = methodName[0].match(/[ ](w?.)*\(/)[0].replace(/ |\(/g, '');
   method.return.type = methodName[0].match(/[a-zA-Z](w?.)* /)[0].replace(' ', '');
+  method.return.type = getTypeParam(method.return.type, code, packageName);
 
   var doces = code.match(/\*((\s*?.*?)*?)\n/g)
   if (!doces) {
@@ -134,13 +135,21 @@ function getMethod(code: string): any {
   var args = code.match(/\(((\s*?.*?)*?)\)/g)[0].replace(/\(|\)/g, '').split(',');
 
   for (var i in args) {
-    var methodArg = {
+    var methodArg: any = {
       name: '',
       type: '',
       doc: ''
     }
     var tmp = args[i].split(' ');
-    methodArg.type = tmp[0];
+    var paramType = tmp[0];
+    if(paramType.length === 0){
+      paramType = tmp[1];
+    }
+    var argType = getTypeParam(paramType, code);
+    methodArg.type = argType.type;
+    if(argType.typeParams){
+      methodArg.typeParams = argType.typeParams;
+    }
     methodArg.name = tmp[1];
     methodArg.doc = argsDoc[i].replace(/@param |\n/g, '');
     method.args.push(methodArg);
@@ -181,14 +190,58 @@ function getType(code: string): any {
     throw new Error(`lost some properties comment: ${itemType.name}`);
   }
   for (var i in properties) {
+    var property = {};
     var tmp = properties[i].replace('\n', '').split(' ');
-    var property = {
+
+    var typeParam = getTypeParam(tmp[0], code);
+
+    property = {
       name: tmp[1],
-      type: type.toIdlType(tmp[0]),
+      type: typeParam.type,
+      typeParams: typeParam.typeParams,
       doc: propertyDoc[i].match(/\* ((\s*?.*?)*?)\n/g)[0].replace(/\* |\n/g, '')
     };
     itemType.properties.push(property);
   }
 
   return itemType;
+}
+
+function getTypeParam(typeCode: string, code: string, packageName?: string): any {
+  var propType = type.toIdlType(typeCode);
+  var propTypeParams = [""];
+  propTypeParams.pop();
+  if (!propType) {//无类型或非数据类型，非数据类型需要处理
+    if (typeCode.indexOf('<') > -1) {
+      var typeTmp = typeCode.split('<');
+      propType = typeTmp[0];
+      typeTmp[1] = typeTmp[1].replace(/\>| /g, '');
+      if (typeTmp[1].indexOf(',') > -1) {
+        var tmpPropTypeParams = typeTmp[1].split(',');
+        propTypeParams.push(getTypeParam(tmpPropTypeParams[0], code, packageName));
+        propTypeParams.push(getTypeParam(tmpPropTypeParams[1], code, packageName));
+      }
+      else {
+        propTypeParams.push(getTypeParam(typeTmp[1], code, packageName));
+      }
+    } else {
+      propType = typeCode;
+    }
+    var packageReg = new RegExp(`import ((\s*?.*?)*?)${propType}`);
+    var thisPackage = code.match(packageReg);
+    if(thisPackage){
+      propType = thisPackage[0].split(' ')[1];
+    }else{
+      propType = `${packageName}.` + propType;
+    }
+  }
+  if (propTypeParams.length > 0) {
+    return {
+      type: propType,
+      typeParams: propTypeParams
+    }
+  }
+  return {
+    type: propType
+  }
 }
