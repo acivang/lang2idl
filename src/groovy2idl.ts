@@ -142,12 +142,12 @@ function getMethod(code: string, packageName: string): any {
     }
     var tmp = args[i].split(' ');
     var paramType = tmp[0];
-    if(paramType.length === 0){
+    if (paramType.length === 0) {
       paramType = tmp[1];
     }
     var argType = getTypeParam(paramType, code);
     methodArg.type = argType.type;
-    if(argType.typeParams){
+    if (argType.typeParams) {
       methodArg.typeParams = argType.typeParams;
     }
     methodArg.name = tmp[1];
@@ -227,9 +227,9 @@ function getTypeParam(typeCode: string, code: string, packageName?: string): any
     } else {
       propType = typeCode;
     }
-      
+
     propType = getTypeWithPackage(propType, code, packageName);
-    
+
   }
   if (propTypeParams.length > 0) {
     return {
@@ -242,13 +242,13 @@ function getTypeParam(typeCode: string, code: string, packageName?: string): any
   }
 }
 
-function getTypeWithPackage(type: string, code: string, packageName: string): string{
+function getTypeWithPackage(type: string, code: string, packageName: string): string {
 
-    var packageReg = new RegExp(`import ((\s*?.*?)*?)${type}`);
-    var thisPackage = code.match(packageReg);
-    if(thisPackage){
-      return thisPackage[0].split(' ')[1];
-    }
-      
-      return `${packageName}.` + type;
+  var packageReg = new RegExp(`import ((\s*?.*?)*?)${type}`);
+  var thisPackage = code.match(packageReg);
+  if (thisPackage) {
+    return thisPackage[0].split(' ')[1];
+  }
+
+  return `${packageName}.` + type;
 }
