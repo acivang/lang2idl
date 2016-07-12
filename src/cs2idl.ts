@@ -3,11 +3,12 @@ import * as fileStream  from 'fs';
 import * as dataType from './utils/type';
 import * as struct from './utils/struct';
 
-const rpcPackage: string = 'org.nofdev.rpc.';
+const namespace: string = 'org.nofdev.rpc.';
 
 export function convert(path: string): void {
+
   let isDir: boolean = false;
-  if (path.lastIndexOf('.groovy') < 0 || path.lastIndexOf('*.groovy') > 0) {
+  if (path.lastIndexOf('.cs') < 0 || path.lastIndexOf('*.cs') > 0) {
     isDir = true;
   }
   if (!fileStream.existsSync(path)) {
@@ -20,18 +21,19 @@ export function convert(path: string): void {
     filesPath = [path];
   }
   let idl = struct.idlStruct();
+
   for (let index in filesPath) {
     let file = filesPath[index];
-    if (file.lastIndexOf('DTO.groovy') < 0 && file.lastIndexOf('Facade.groovy') < 0) {
+    if (file.lastIndexOf('DTO.cs') < 0 && file.lastIndexOf('Facade.cs') < 0) {
       continue;
     }
     let code = fileStream.readFileSync(path + file).toString();
-    if (file.lastIndexOf('Facade.groovy') > -1) {
+    if (file.lastIndexOf('Facade.cs') > -1) {
 
       let itemInterface = getInterface(code);
       idl.interfaces.push(itemInterface);
 
-    } else if (file.lastIndexOf('DTO.groovy') > -1) {
+    } else if (file.lastIndexOf('DTO.cs') > -1) {
 
       let itemType = getType(code);
       idl.types.push(itemType);
@@ -47,7 +49,7 @@ function getInterface(code: string): any {
   let itemInterface = struct.interfaceStruct();
   let dicTypes = [''];
 
-  itemInterface.package = code.match(/package((\s*?.*?)*?)\n/)[0].replace(/package |\n/g, '');
+  itemInterface.package = code.match(/namespace ((\s*?.*?)*?)\n/)[0].replace(/package |\n/g, '');
   itemInterface.name = code.match(/interface((\s*?.*?)*?)Facade/)[0].replace('interface ', '');
   let interfaceDoc = code.match(/\/\*\*((\s*?.*?)*?)interface/);
   if (interfaceDoc && interfaceDoc.length > 2) {
@@ -62,7 +64,7 @@ function getInterface(code: string): any {
   }
   for (let i in metaes) {
     itemInterface.meta.push({
-      type: rpcPackage + metaes[i].replace(/\n|@/g, ''),
+      type: namespace + metaes[i].replace(/\n|@/g, ''),
       args: {}
     });
   }
@@ -132,36 +134,29 @@ function getType(code: string): any {
 
   let itemType = struct.typeStruct();
 
-  itemType.package = code.match(/package((\s*?.*?)*?)\n/g)[0].replace(/package |\n/g, '');
+  itemType.package = code.match(/namespace ((\s*?.*?)*?)\n/g)[0].replace(/namespace |\n/g, '');
   let typeDoc = code.match(/\/\*\*((\s*?.*?)*?)class/);
   if (typeDoc.length > 2) {
     itemType.doc = typeDoc[1].replace(/\*|\n|\/| /g, '');
   }
   itemType.name = code.match(/class((\s*?.*?)*?)DTO/g)[0].replace('class ', '');
 
-  let propertiesTmp = code.match(/\{((\s*?.*?)*?)\}/)[0];
-  let properties = propertiesTmp.match(/[a-zA-Z]((\s*?.*?)*?)\n/g);
-  let propertyDoc = propertiesTmp.match(/\/\*\*((\s*?.*?)*?)\//g);
-  if (!properties) {
+  let propertiesTmp = code.match(/class((\s*?.*?)*?)\}/g)[0].match(/\/\*\*((\s*?.*?)*?)\;/g);
+  if (!propertiesTmp) {
     throw new Error(`no properties for: ${itemType.name}`);
   }
-  if (!propertyDoc) {
-    throw new Error(`no property's comment for: ${itemType.name}`);
-  }
-  if (properties.length != propertyDoc.length) {
-    throw new Error(`lost some properties comment: ${itemType.name}`);
-  }
-  for (let i in properties) {
+  for (let i in propertiesTmp) {
     let property = {};
-    let tmp = properties[i].replace('\n', '').split(' ');
-
-    let typeParam = getTypeParam(tmp[0], code);
+    let properties = propertiesTmp[i].match(/[a-zA-Z]((\s*?.*?)*?)\;/);
+    let propertyDoc = propertiesTmp[i].match(/\/\*\*((\s*?.*?)*?)\//)[0];
+    let propertyTmp = properties[0].split(' ');
+    let typeParam = getTypeParam(propertyTmp[0], code);
 
     property = {
-      name: tmp[1],
+      name: propertyTmp[1].replace(';',''),
       type: typeParam.type,
       typeParams: typeParam.typeParams,
-      doc: propertyDoc[i].match(/\* ((\s*?.*?)*?)\n/g)[0].replace(/\* |\n/g, '')
+      doc: propertyDoc.match(/\* ((\s*?.*?)*?)\n/g)[0].replace(/\* |\n/g, '')
     };
     itemType.properties.push(property);
   }

@@ -15,7 +15,8 @@ let IdlTypeDictionary: { [type: string]: string } = {
   ['char']: 'string',
   ['boolean']: 'boolean',
   ['offsetdatetime']: 'date',
-  ['datetime']: 'Date',
+  ['datetimeoffset']: 'date',
+  ['datetime']: 'date',
   ['list']: 'array',
   ['void']: 'viod',
   ['def']: 'void'

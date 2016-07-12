@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 
 import * as groovy2idl from './src/groovy2idl';
+import * as csharp2idl from './src/cs2idl';
 
 let dir: string;
 let argvs = process.argv;
@@ -27,7 +28,8 @@ switch (command) {
   case 'groovy2idl':
     groovy2idl.convert(dir);
     break;
-  case '':
+  case 'cs2idl':
+    csharp2idl.convert(dir);
     break;
   default:
     break;
