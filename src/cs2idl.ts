@@ -5,6 +5,8 @@ import * as struct from './utils/struct';
 
 const namespace: string = 'org.nofdev.rpc.';
 
+let usings: string = '';
+
 export function convert(path: string): void {
 
   let isDir: boolean = false;
@@ -48,8 +50,8 @@ function getInterface(code: string): any {
 
   let itemInterface = struct.interfaceStruct();
   let dicTypes = [''];
-
-  itemInterface.package = code.match(/namespace ((\s*?.*?)*?)\n/)[0].replace(/package |\n/g, '');
+  usings = code.match(/using ((\w.?.)*?);/g).toString();
+  itemInterface.package = code.match(/namespace ((\s*?.*?)*?)\n/)[0].replace(/namespace |\n/g, '');
   itemInterface.name = code.match(/interface((\s*?.*?)*?)Facade/)[0].replace('interface ', '');
   let interfaceDoc = code.match(/\/\*\*((\s*?.*?)*?)interface/);
   if (interfaceDoc && interfaceDoc.length > 2) {
@@ -75,17 +77,17 @@ function getInterface(code: string): any {
   }
   let methods = methodCode[0].match(/\/\*\*((\s*?.*?)*?)\)/g);
   for (let i in methods) {
-    let method = getMethod(methods[i], itemInterface.package);
+    let method = getMethod(methods[i], itemInterface.package, code);
     itemInterface.methods.push(method);
   }
 
   return itemInterface;
 }
 
-function getMethod(code: string, packageName: string): any {
+function getMethod(methodCode: string, packageName: string, code: string): any {
   let method = struct.methodStruct();
 
-  let methodName = code.match(/[a-zA-Z](w?.)*\(/);
+  let methodName = methodCode.match(/[a-zA-Z](w?.)*\(/);
   if (!methodName) {
     throw new Error(`code format error: ${code}`);
   }
@@ -93,17 +95,17 @@ function getMethod(code: string, packageName: string): any {
   method.return.type = methodName[0].match(/[a-zA-Z](w?.)* /)[0].replace(' ', '');
   method.return.type = getTypeParam(method.return.type, code, packageName);
 
-  let doces = code.match(/\*((\s*?.*?)*?)\n/g)
+  let doces = methodCode.match(/\*((\s*?.*?)*?)\n/g)
   if (!doces) {
     throw new Error(`no document for the method: ${method.name}`);
   }
   method.doc = doces[1].replace(/\* |\n/g, '');
 
-  let docReturn = code.match(/\@return((\s*?.*?)*?)\n/);
+  let docReturn = methodCode.match(/\@return((\s*?.*?)*?)\n/);
   method.return.doc = docReturn[0].replace(/@return |\n/g, '');
 
-  let argsDoc = code.match(/\@param((\s*?.*?)*?)\n/g);
-  let args = code.match(/\(((\s*?.*?)*?)\)/g)[0].replace(/\(|\)/g, '').split(',');
+  let argsDoc = methodCode.match(/\@param((\s*?.*?)*?)\n/g);
+  let args = methodCode.match(/\(((\s*?.*?)*?)\)/g)[0].replace(/\(|\)/g, '').split(',');
 
   for (let i in args) {
     let methodArg: any = {
@@ -116,13 +118,13 @@ function getMethod(code: string, packageName: string): any {
     if (paramType.length === 0) {
       paramType = tmp[1];
     }
-    let argType = getTypeParam(paramType, code);
+    let argType = getTypeParam(paramType, code, packageName);
     methodArg.type = argType.type;
     if (argType.typeParams) {
       methodArg.typeParams = argType.typeParams;
     }
-    methodArg.name = tmp[1];
-    methodArg.doc = argsDoc[i].replace(/@param |\n/g, '');
+    methodArg.name = tmp[0]==='' ? tmp[2] : tmp[1];
+    methodArg.doc = argsDoc[i].replace(/@param| |\n/g, '');
     method.args.push(methodArg);
   }
 
@@ -137,7 +139,7 @@ function getType(code: string): any {
   itemType.package = code.match(/namespace ((\s*?.*?)*?)\n/g)[0].replace(/namespace |\n/g, '');
   let typeDoc = code.match(/\/\*\*((\s*?.*?)*?)class/);
   if (typeDoc.length > 2) {
-    itemType.doc = typeDoc[1].replace(/\*|\n|\/| /g, '');
+    itemType.doc = typeDoc[1].replace(/\*|\n|\/|\tpublic| /g, '');
   }
   itemType.name = code.match(/class((\s*?.*?)*?)DTO/g)[0].replace('class ', '');
 
@@ -149,8 +151,8 @@ function getType(code: string): any {
     let property = {};
     let properties = propertiesTmp[i].match(/[a-zA-Z]((\s*?.*?)*?)\;/);
     let propertyDoc = propertiesTmp[i].match(/\/\*\*((\s*?.*?)*?)\//)[0];
-    let propertyTmp = properties[0].split(' ');
-    let typeParam = getTypeParam(propertyTmp[0], code);
+    let propertyTmp = properties[0].replace('public ','').split(' ');
+    let typeParam = getTypeParam(propertyTmp[0], code, itemType.package);
 
     property = {
       name: propertyTmp[1].replace(';',''),
@@ -185,7 +187,7 @@ function getTypeParam(typeCode: string, code: string, packageName?: string): any
       propType = typeCode;
     }
 
-    propType = getTypeWithPackage(propType, code, packageName);
+;    propType = getTypeWithPackage(propType, code, packageName);
 
   }
   if (propTypeParams.length > 0) {
@@ -201,8 +203,8 @@ function getTypeParam(typeCode: string, code: string, packageName?: string): any
 
 function getTypeWithPackage(type: string, code: string, packageName: string): string {
 
-  let packageReg = new RegExp(`import ((\s*?.*?)*?)${type}`);
-  let thisPackage = code.match(packageReg);
+  let packageReg = new RegExp(`using ((\\w\\.?)*?)${type}`);
+  let thisPackage = usings.match(packageReg);
   if (thisPackage) {
     return thisPackage[0].split(' ')[1];
   }

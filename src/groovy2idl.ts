@@ -73,35 +73,35 @@ function getInterface(code: string): any {
   }
   let methods = methodCode[0].match(/\/\*\*((\s*?.*?)*?)\)/g);
   for (let i in methods) {
-    let method = getMethod(methods[i], itemInterface.package);
+    let method = getMethod(methods[i], itemInterface.package, code);
     itemInterface.methods.push(method);
   }
 
   return itemInterface;
 }
 
-function getMethod(code: string, packageName: string): any {
+function getMethod(methodCode: string, packageName: string, code: string): any {
   let method = struct.methodStruct();
 
-  let methodName = code.match(/[a-zA-Z](w?.)*\(/);
+  let methodName = methodCode.match(/[a-zA-Z](w?.)*\(/);
   if (!methodName) {
-    throw new Error(`code format error: ${code}`);
+    throw new Error(`code format error: ${methodCode}`);
   }
   method.name = methodName[0].match(/[ ](w?.)*\(/)[0].replace(/ |\(/g, '');
   method.return.type = methodName[0].match(/[a-zA-Z](w?.)* /)[0].replace(' ', '');
   method.return.type = getTypeParam(method.return.type, code, packageName);
 
-  let doces = code.match(/\*((\s*?.*?)*?)\n/g)
+  let doces = methodCode.match(/\*((\s*?.*?)*?)\n/g)
   if (!doces) {
     throw new Error(`no document for the method: ${method.name}`);
   }
   method.doc = doces[1].replace(/\* |\n/g, '');
 
-  let docReturn = code.match(/\@return((\s*?.*?)*?)\n/);
+  let docReturn = methodCode.match(/\@return((\s*?.*?)*?)\n/);
   method.return.doc = docReturn[0].replace(/@return |\n/g, '');
 
-  let argsDoc = code.match(/\@param((\s*?.*?)*?)\n/g);
-  let args = code.match(/\(((\s*?.*?)*?)\)/g)[0].replace(/\(|\)/g, '').split(',');
+  let argsDoc = methodCode.match(/\@param((\s*?.*?)*?)\n/g);
+  let args = methodCode.match(/\(((\s*?.*?)*?)\)/g)[0].replace(/\(|\)/g, '').split(',');
 
   for (let i in args) {
     let methodArg: any = {
@@ -206,7 +206,7 @@ function getTypeParam(typeCode: string, code: string, packageName?: string): any
 
 function getTypeWithPackage(type: string, code: string, packageName: string): string {
 
-  let packageReg = new RegExp(`import ((\s*?.*?)*?)${type}`);
+  let packageReg = new RegExp(`import ((\\w\\.?)*?)${type}`);
   let thisPackage = code.match(packageReg);
   if (thisPackage) {
     return thisPackage[0].split(' ')[1];
