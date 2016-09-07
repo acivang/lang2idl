@@ -18,6 +18,8 @@ let IdlTypeDictionary: { [type: string]: string } = {
   ['datetimeoffset']: 'date',
   ['datetime']: 'date',
   ['list']: 'array',
+  ['map']: 'array',
+  ['dictionary']: 'array',
   ['void']: 'viod',
   ['def']: 'void'
 };
