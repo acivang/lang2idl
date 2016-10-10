@@ -2,8 +2,43 @@
 import * as fileStream from 'fs';
 import * as dataType from './utils/type';
 
+interface ITest{
+  fun1(): void;
+  fun2(): void;
+  fun3(): void;
+}
+
+class Test implements ITest{
+
+  fun1(): void{};
+  fun2(): void{};
+  fun3(): void{};
+}
+
+class ProxyFactory<T> {
+  getInstance<T>(ctor: T): T{
+    let t = new Test();
+    console.log(`t的当前泛型类型是： ${ typeof(t) }`);
+    console.log(`ctor的当前泛型类型是： ${ typeof(Test) }`);
+    let test = Object.create(Test);
+    let p = Object.getOwnPropertyNames(ctor);
+    for(let pk of p){
+      console.log(pk);
+    }
+    return ctor;
+  }
+}
 
 export function convert(path: string): void {
+  // let test: ITest = new Test();
+  let proxyFactory: ProxyFactory<ITest> = new ProxyFactory<ITest>();
+  let iTest: ITest = <ITest>{};
+  proxyFactory.getInstance<Test>(iTest);
+  // let p = Object.getOwnPropertyNames(Object.prototype);
+  // for(let pk of p){
+  //   console.log(pk);
+  // }
+
   if (!fileStream.existsSync(path)) {
     throw new Error(`no such file or directory, open '${path}'`);
   }
@@ -56,7 +91,7 @@ export function convert(path: string): void {
       }
       methodCode.push(doc.join("\n"));
       if (method.return.type.type.indexOf(".") < 0) {
-        methodCode.push(`function ${method.name}(${args.join(", ")}): ${method.return.type.type}{}`)
+        methodCode.push(`${method.name}(${args.join(", ")}): ${method.return.type.type}{}`)
       } else {
         namespaceName = method.return.type.type.substring(0, method.return.type.type.lastIndexOf("."));
         if (!referencesDic[namespaceName]) {
@@ -78,14 +113,14 @@ export function convert(path: string): void {
             typeParams.push(typeParam);
           }
 
-          methodCode.push(`function ${method.name}(${args.join(", ")}): ${method.return.type.type.substring(method.return.type.type.lastIndexOf(".")+1)}<${typeParams.join(", ")}>{}`);
+          methodCode.push(`${method.name}(${args.join(", ")}): ${method.return.type.type.substring(method.return.type.type.lastIndexOf(".")+1)}<${typeParams.join(", ")}>;`);
         } else {
 
-          methodCode.push(`function ${method.name}(${args.join(", ")}): ${ method.return.type.type.substring(method.return.type.type.lastIndexOf(".")+1) }{}`);
+          methodCode.push(`${method.name}(${args.join(", ")}): ${ method.return.type.type.substring(method.return.type.type.lastIndexOf(".")+1) };`);
         }
       }
     }
-    interfaceCodes.splice(0, 0, references.join("\n"));
+    interfaceCodes.push(references.join("\n"));
     interfaceCodes.push(methodCode.join(";\n"));
     interfaceCodes.push("}");
     interfaceCodes.push("}");

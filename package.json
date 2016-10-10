@@ -6,7 +6,8 @@
     "scripts": {
         "test": "test",
         "groovy2idl": "tsc & node ./dist/index.js groovy2idl ",
-        "cs2idl": "tsc & node ./dist/index.js cs2idl "
+        "cs2idl": "tsc & node ./dist/index.js cs2idl ",
+        "idl2ts": "tsc & node ./dist/index.js idl2ts"
     },
     "repository": {
         "type": "git",

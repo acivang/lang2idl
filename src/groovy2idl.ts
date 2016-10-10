@@ -98,8 +98,9 @@ function getMethod(methodCode: string, packageName: string, code: string): any {
   method.doc = doces[1].replace(/\* |\n/g, '');
 
   let docReturn = methodCode.match(/\@return((\s*?.*?)*?)\n/);
-  method.return.doc = docReturn[0].replace(/@return |\n/g, '');
-
+  if(docReturn){
+    method.return.doc = docReturn[0].replace(/@return |\n/g, '');
+  }
   let argsDoc = methodCode.match(/\@param((\s*?.*?)*?)\n/g);
   let args = methodCode.match(/\(((\s*?.*?)*?)\)/g)[0].replace(/\(|\)/g, '').split(',');
 
@@ -111,17 +112,25 @@ function getMethod(methodCode: string, packageName: string, code: string): any {
     }
     let tmp = args[i].split(' ');
     let paramType = tmp[0];
+    if(args[i].indexOf(' ') === 0){
+      paramType = tmp[1];
+    }
     if (paramType.length === 0) {
       paramType = tmp[1];
     }
     let argType = getTypeParam(paramType, code);
+    if(argType.type !== "undefined"){
     methodArg.type = argType.type;
     if (argType.typeParams) {
       methodArg.typeParams = argType.typeParams;
     }
     methodArg.name = tmp[1];
+    if(args[i].indexOf(' ') === 0){
+      methodArg.name = tmp[2];
+    }
     methodArg.doc = argsDoc[i].replace(/@param |\n/g, '');
     method.args.push(methodArg);
+    }
   }
 
   return method;
@@ -140,7 +149,7 @@ function getType(code: string): any {
   itemType.name = code.match(/class((\s*?.*?)*?)DTO/g)[0].replace('class ', '');
 
   let propertiesTmp = code.match(/\{((\s*?.*?)*?)\}/)[0];
-  let properties = propertiesTmp.match(/[a-zA-Z]((\s*?.*?)*?)\n/g);
+  let properties = propertiesTmp.match(/(    |  )[a-zA-Z]((\s*?.*?)*?)\n/g);
   let propertyDoc = propertiesTmp.match(/\/\*\*((\s*?.*?)*?)\//g);
   if (!properties) {
     throw new Error(`no properties for: ${itemType.name}`);
@@ -153,7 +162,7 @@ function getType(code: string): any {
   }
   for (let i in properties) {
     let property = {};
-    let tmp = properties[i].replace('\n', '').split(' ');
+    let tmp = properties[i].replace(/    /, '').replace(/\n/, '').split(' ');
 
     let typeParam = getTypeParam(tmp[0], code);
 

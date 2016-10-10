@@ -26,6 +26,8 @@ let IdlTypeDictionary: { [type: string]: string } = {
 
 export function toIdlType(type: string): string {
   let idlType = 'undefined';
+  if(type){
   idlType = IdlTypeDictionary[type.toLowerCase()];
+  }
   return idlType;
 }
