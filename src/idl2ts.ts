@@ -2,42 +2,8 @@
 import * as fileStream from 'fs';
 import * as dataType from './utils/type';
 
-interface ITest{
-  fun1(): void;
-  fun2(): void;
-  fun3(): void;
-}
-
-class Test implements ITest{
-
-  fun1(): void{};
-  fun2(): void{};
-  fun3(): void{};
-}
-
-class ProxyFactory<T> {
-  getInstance<T>(ctor: T): T{
-    let t = new Test();
-    console.log(`t的当前泛型类型是： ${ typeof(t) }`);
-    console.log(`ctor的当前泛型类型是： ${ typeof(Test) }`);
-    let test = Object.create(Test);
-    let p = Object.getOwnPropertyNames(ctor);
-    for(let pk of p){
-      console.log(pk);
-    }
-    return ctor;
-  }
-}
 
 export function convert(path: string): void {
-  // let test: ITest = new Test();
-  let proxyFactory: ProxyFactory<ITest> = new ProxyFactory<ITest>();
-  let iTest: ITest = <ITest>{};
-  proxyFactory.getInstance<Test>(iTest);
-  // let p = Object.getOwnPropertyNames(Object.prototype);
-  // for(let pk of p){
-  //   console.log(pk);
-  // }
 
   if (!fileStream.existsSync(path)) {
     throw new Error(`no such file or directory, open '${path}'`);
@@ -129,8 +95,21 @@ export function convert(path: string): void {
 
   for (let i: number = 0; i < types.length; i++) {
     let item: any = types[i];
+    let typeCodes: Array<string> = new Array();
+    typeCodes.push(`namespace ${item.package}{`);
+    if (item.doc) {
+      typeCodes.push(`//${item.doc}`);
+    }
+    typeCodes.push(`class ${ item.name }{`);
+    for(let property of item.properties){
+      typeCodes.push(`//${property.doc}`);
+      typeCodes.push(`public ${ property.name}: ${property.type};`);
+      typeCodes.push("\n");
+    }
+    typeCodes.push("}");
+    typeCodes.push("}");
 
+    console.log(typeCodes.join("\n"));
   }
-  console.log(code);
 
 }
