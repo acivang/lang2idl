@@ -4,8 +4,8 @@
 
 2. How use?
 
-  create json idl from groovy: 
+  create json idl from groovy: npm run groovy2idl "groovy file dir path" 
 
-  create json idl from c#:
+  create json idl from c#: npm run cs2idl "cs file dir path"
 
-  create typescript from json idl:
+  create typescript from json idl: npm run idl2ts "json idl file path"
