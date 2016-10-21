@@ -43,6 +43,11 @@ export function convert(path: string): void {
     }
 
   }
+
+  if(idl.types.length === 0){
+    idl.types.push({});
+  }
+  
   console.log(JSON.stringify(idl));
 }
 

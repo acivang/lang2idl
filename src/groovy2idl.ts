@@ -39,6 +39,11 @@ export function convert(path: string): void {
     }
 
   }
+
+  if(idl.types.length === 0){
+    idl.types.push({});
+  }
+  
   console.log(JSON.stringify(idl));
 }
 
@@ -80,7 +85,7 @@ function getInterface(code: string): any {
   if(itemInterface.meta.length === 0){
     itemInterface.meta.push({});
   }
-  
+
   return itemInterface;
 }
 
