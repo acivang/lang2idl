@@ -77,6 +77,10 @@ function getInterface(code: string): any {
     itemInterface.methods.push(method);
   }
 
+  if(itemInterface.meta.length === 0){
+    itemInterface.meta.push({});
+  }
+  
   return itemInterface;
 }
 
@@ -132,7 +136,9 @@ function getMethod(methodCode: string, packageName: string, code: string): any {
     method.args.push(methodArg);
     }
   }
-
+  if(method.throws.length === 0){
+    method.throws.push({});
+  }
   return method;
 }
 

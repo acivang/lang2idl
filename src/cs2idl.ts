@@ -81,6 +81,10 @@ function getInterface(code: string): any {
     itemInterface.methods.push(method);
   }
 
+  if(itemInterface.meta.length === 0){
+    itemInterface.meta.push({});
+  }
+
   return itemInterface;
 }
 
@@ -126,6 +130,9 @@ function getMethod(methodCode: string, packageName: string, code: string): any {
     methodArg.name = tmp[0]==='' ? tmp[2] : tmp[1];
     methodArg.doc = argsDoc[i].replace(/@param| |\n/g, '');
     method.args.push(methodArg);
+  }
+  if(method.throws.length === 0){
+    method.throws.push({});
   }
 
   return method;
