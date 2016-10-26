@@ -127,7 +127,7 @@ function getMethod(methodCode: string, packageName: string, code: string): any {
     if (paramType.length === 0) {
       paramType = tmp[1];
     }
-    let argType = getTypeParam(paramType, code);
+    let argType = getTypeParam(paramType, code, packageName);
     if(argType.type !== "undefined"){
     methodArg.type = argType.type;
     if (argType.typeParams) {
