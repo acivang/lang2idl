@@ -1,4 +1,4 @@
-import * as fileStream  from 'fs';
+import * as fileStream from 'fs';
 
 import * as dataType from './utils/type';
 import * as struct from './utils/struct';
@@ -40,10 +40,10 @@ export function convert(path: string): void {
 
   }
 
-  if(idl.types.length === 0){
+  if (idl.types.length === 0) {
     idl.types.push({});
   }
-  
+
   console.log(JSON.stringify(idl));
 }
 
@@ -82,7 +82,7 @@ function getInterface(code: string): any {
     itemInterface.methods.push(method);
   }
 
-  if(itemInterface.meta.length === 0){
+  if (itemInterface.meta.length === 0) {
     itemInterface.meta.push({});
   }
 
@@ -96,7 +96,12 @@ function getMethod(methodCode: string, packageName: string, code: string): any {
   if (!methodName) {
     throw new Error(`code format error: ${methodCode}`);
   }
-  method.name = methodName[0].match(/[ ](w?.)*\(/)[0].replace(/ |\(/g, '');
+  if (methodName[0].indexOf('<') > -1) {
+    method.name = methodName[0].match(/(>[ ]|>)(w?.)*\(/)[0].replace(/> |>|\(/g, '');
+  }
+  else {
+    method.name = methodName[0].match(/[ ](w?.)*\(/)[0].replace(/ |\(/g, '');
+  }
   method.return.type = methodName[0].match(/[a-zA-Z](w?.)* /)[0].replace(' ', '');
   method.return.type = getTypeParam(method.return.type, code, packageName);
 
@@ -107,7 +112,7 @@ function getMethod(methodCode: string, packageName: string, code: string): any {
   method.doc = doces[1].replace(/\* |\n/g, '');
 
   let docReturn = methodCode.match(/\@return((\s*?.*?)*?)\n/);
-  if(docReturn){
+  if (docReturn) {
     method.return.doc = docReturn[0].replace(/@return |\n/g, '');
   }
   let argsDoc = methodCode.match(/\@param((\s*?.*?)*?)\n/g);
@@ -121,27 +126,27 @@ function getMethod(methodCode: string, packageName: string, code: string): any {
     }
     let tmp = args[i].split(' ');
     let paramType = tmp[0];
-    if(args[i].indexOf(' ') === 0){
+    if (args[i].indexOf(' ') === 0) {
       paramType = tmp[1];
     }
     if (paramType.length === 0) {
       paramType = tmp[1];
     }
     let argType = getTypeParam(paramType, code, packageName);
-    if(argType.type !== "undefined"){
-    methodArg.type = argType.type;
-    if (argType.typeParams) {
-      methodArg.typeParams = argType.typeParams;
-    }
-    methodArg.name = tmp[1];
-    if(args[i].indexOf(' ') === 0){
-      methodArg.name = tmp[2];
-    }
-    methodArg.doc = argsDoc[i].replace(/@param |\n/g, '');
-    method.args.push(methodArg);
+    if (argType.type !== "undefined") {
+      methodArg.type = argType.type;
+      if (argType.typeParams) {
+        methodArg.typeParams = argType.typeParams;
+      }
+      methodArg.name = tmp[1];
+      if (args[i].indexOf(' ') === 0) {
+        methodArg.name = tmp[2];
+      }
+      methodArg.doc = argsDoc[i].replace(/@param |\n/g, '');
+      method.args.push(methodArg);
     }
   }
-  if(method.throws.length === 0){
+  if (method.throws.length === 0) {
     method.throws.push({});
   }
   return method;

@@ -20,7 +20,7 @@ let IdlTypeDictionary: { [type: string]: string } = {
   ['list']: 'array',
   ['map']: 'array',
   ['dictionary']: 'array',
-  ['void']: 'viod',
+  ['void']: 'void',
   ['def']: 'void'
 };
 

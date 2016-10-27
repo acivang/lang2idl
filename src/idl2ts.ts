@@ -52,12 +52,12 @@ export function convert(path: string): void {
             referencesDic[namespaceName] = true;
             references.push(`/// <reference path="${namespaceName}.ts" />`);
           }
-          args.push(`${arg.name}: ${arg.type.substring(arg.type.lastIndexOf(".")+1)}`);
+          args.push(`${arg.name}: ${arg.type.substring(arg.type.lastIndexOf(".") + 1)}`);
         }
       }
       methodCode.push(doc.join("\n"));
       if (method.return.type.type.indexOf(".") < 0) {
-        methodCode.push(`${method.name}(${args.join(", ")}): ${method.return.type.type}{}`)
+        methodCode.push(`${method.name}(${args.join(", ")}): Promise<${method.return.type.type}>`)
       } else {
         namespaceName = method.return.type.type.substring(0, method.return.type.type.lastIndexOf("."));
         if (!referencesDic[namespaceName]) {
@@ -70,7 +70,7 @@ export function convert(path: string): void {
             let typeParam: any = method.return.type.typeParams[m];
             if (typeParam.indexOf(".") > -1) {
               namespaceName = typeParam.substring(0, typeParam.lastIndexOf("."));
-              typeParam = typeParam.substring(typeParam.lastIndexOf(".")+1);
+              typeParam = typeParam.substring(typeParam.lastIndexOf(".") + 1);
               if (!referencesDic[namespaceName]) {
                 referencesDic[namespaceName] = true;
                 references.push(`/// <reference path="${namespaceName}.ts" />`);
@@ -79,10 +79,10 @@ export function convert(path: string): void {
             typeParams.push(typeParam);
           }
 
-          methodCode.push(`${method.name}(${args.join(", ")}): ${method.return.type.type.substring(method.return.type.type.lastIndexOf(".")+1)}<${typeParams.join(", ")}>;`);
+          methodCode.push(`${method.name}(${args.join(", ")}): Promise<${method.return.type.type.substring(method.return.type.type.lastIndexOf(".") + 1)}<${typeParams.join(", ")}>>`);
         } else {
 
-          methodCode.push(`${method.name}(${args.join(", ")}): ${ method.return.type.type.substring(method.return.type.type.lastIndexOf(".")+1) };`);
+          methodCode.push(`${method.name}(${args.join(", ")}): Promise<${method.return.type.type.substring(method.return.type.type.lastIndexOf(".") + 1)}>`);
         }
       }
     }
@@ -91,25 +91,29 @@ export function convert(path: string): void {
     interfaceCodes.push("}");
     interfaceCodes.push("}");
     console.log(interfaceCodes.join("\n"));
+    path = path.substring(0, path.lastIndexOf('/')+1);
+    fileStream.writeFileSync(path + 'result.ts', interfaceCodes.join("\n"));
   }
 
   for (let i: number = 0; i < types.length; i++) {
     let item: any = types[i];
-    let typeCodes: Array<string> = new Array();
-    typeCodes.push(`namespace ${item.package}{`);
-    if (item.doc) {
-      typeCodes.push(`//${item.doc}`);
-    }
-    typeCodes.push(`class ${ item.name }{`);
-    for(let property of item.properties){
-      typeCodes.push(`//${property.doc}`);
-      typeCodes.push(`public ${ property.name}: ${property.type};`);
-      typeCodes.push("\n");
-    }
-    typeCodes.push("}");
-    typeCodes.push("}");
+    if (item.package) {
+      let typeCodes: Array<string> = new Array();
+      typeCodes.push(`namespace ${item.package}{`);
+      if (item.doc) {
+        typeCodes.push(`//${item.doc}`);
+      }
+      typeCodes.push(`class ${item.name}{`);
+      for (let property of item.properties) {
+        typeCodes.push(`//${property.doc}`);
+        typeCodes.push(`public ${property.name}: ${property.type};`);
+        typeCodes.push("\n");
+      }
+      typeCodes.push("}");
+      typeCodes.push("}");
 
-    console.log(typeCodes.join("\n"));
+      console.log(typeCodes.join("\n"));
+    }
   }
 
 }
