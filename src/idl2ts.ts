@@ -55,9 +55,10 @@ export function convert(path: string): void {
           args.push(`${arg.name}: ${arg.type.substring(arg.type.lastIndexOf(".") + 1)}`);
         }
       }
-      methodCode.push(doc.join("\n"));
+      // methodCode.push(doc.join("\n"));
+      let methodLine: string;
       if (method.return.type.type.indexOf(".") < 0) {
-        methodCode.push(`${method.name}(${args.join(", ")}): Promise<${method.return.type.type}>`)
+        methodLine = `${method.name}(${args.join(", ")}): Promise<${method.return.type.type}>`;
       } else {
         namespaceName = method.return.type.type.substring(0, method.return.type.type.lastIndexOf("."));
         if (!referencesDic[namespaceName]) {
@@ -79,15 +80,16 @@ export function convert(path: string): void {
             typeParams.push(typeParam);
           }
 
-          methodCode.push(`${method.name}(${args.join(", ")}): Promise<${method.return.type.type.substring(method.return.type.type.lastIndexOf(".") + 1)}<${typeParams.join(", ")}>>`);
+          methodLine = `${method.name}(${args.join(", ")}): Promise<${method.return.type.type.substring(method.return.type.type.lastIndexOf(".") + 1)}<${typeParams.join(", ")}>>`;
         } else {
 
-          methodCode.push(`${method.name}(${args.join(", ")}): Promise<${method.return.type.type.substring(method.return.type.type.lastIndexOf(".") + 1)}>`);
+          methodLine = `${method.name}(${args.join(", ")}): Promise<${method.return.type.type.substring(method.return.type.type.lastIndexOf(".") + 1)}>`;
         }
       }
+      methodCode.push(`${ doc.join('\n') }\n${ methodLine }`)
     }
     interfaceCodes.push(references.join("\n"));
-    interfaceCodes.push(methodCode.join(";\n"));
+    interfaceCodes.push(methodCode.join(";\n\n"));
     interfaceCodes.push("}");
     interfaceCodes.push("}");
     console.log(interfaceCodes.join("\n"));
