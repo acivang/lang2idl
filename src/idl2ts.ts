@@ -43,6 +43,9 @@ export function convert(path: string): void {
       let namespaceName: string = "";
       for (let l: number = 0; l < method.args.length; l++) {
         let arg: any = method.args[l];
+        if(!arg.name){
+          break;
+        }
         doc.push(`//${arg.doc}`);
         if (arg.type.indexOf('.') < 0) {
           args.push(`${arg.name}: ${arg.type}`);

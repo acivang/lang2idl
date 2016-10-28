@@ -17,17 +17,29 @@ let IdlTypeDictionary: { [type: string]: string } = {
   ['offsetdatetime']: 'Date',
   ['datetimeoffset']: 'Date',
   ['datetime']: 'Date',
-  ['list']: 'array',
-  ['map']: 'array',
-  ['dictionary']: 'array',
+  ['list']: 'Array',
+  ['map']: 'Array',
+  ['dictionary']: 'Array',
   ['void']: 'void',
   ['def']: 'void'
 };
 
 export function toIdlType(type: string): string {
   let idlType = 'undefined';
-  if(type){
-  idlType = IdlTypeDictionary[type.toLowerCase()];
+  if (type) {
+    idlType = IdlTypeDictionary[type.toLowerCase()];
+    if (!idlType) {
+      if (type.indexOf("List")) {
+        idlType = IdlTypeDictionary["list"];
+      } else if (type.indexOf("Map")) {
+        idlType = IdlTypeDictionary["map"];
+      } else if (type.indexOf("Dictionary")) {
+        idlType = IdlTypeDictionary["dictionary"];
+      }
+      if(type.indexOf("<") > -1){
+        idlType = `${ idlType }<any>`
+      }
+    }
   }
   return idlType;
 }

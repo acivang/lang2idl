@@ -48,6 +48,12 @@ export function convert(path: string): void {
     idl.types.push({});
   }
   
+  let jsonIdl: any = JSON.stringify(idl);
+  fileStream.writeFile(path + `idl.json`, jsonIdl);
+
+  jsonIdl = `export let jsonIdl = ${ jsonIdl }`;
+
+  fileStream.writeFile(path + `idl.ts`, jsonIdl);
   console.log(JSON.stringify(idl));
 }
 
@@ -102,7 +108,13 @@ function getMethod(methodCode: string, packageName: string, code: string): any {
   }
   method.name = methodName[0].match(/[ ](w?.)*\(/)[0].replace(/ |\(/g, '');
   method.return.type = methodName[0].match(/[a-zA-Z](w?.)* /)[0].replace(' ', '');
-  method.return.type = getTypeParam(method.return.type, code, packageName);
+  let typeWithTypeParams = getTypeParam(method.return.type, code, packageName);
+  if (typeWithTypeParams.typeParams) {
+    method.return.type = typeWithTypeParams.type;
+    method.return.typeParams = typeWithTypeParams.typeParams;
+  } else {
+    method.return.type = typeWithTypeParams.type;
+  }
 
   let doces = methodCode.match(/\*((\s*?.*?)*?)\n/g)
   if (!doces) {
@@ -135,6 +147,9 @@ function getMethod(methodCode: string, packageName: string, code: string): any {
     methodArg.name = tmp[0]==='' ? tmp[2] : tmp[1];
     methodArg.doc = argsDoc[i].replace(/@param| |\n/g, '');
     method.args.push(methodArg);
+  }
+  if(method.args.length === 0){
+    method.args.push({});
   }
   if(method.throws.length === 0){
     method.throws.push({});
@@ -172,6 +187,43 @@ function getType(code: string): any {
       typeParams: typeParam.typeParams,
       doc: propertyDoc.match(/\* ((\s*?.*?)*?)\n/g)[0].replace(/\* |\n/g, '')
     };
+    itemType.properties.push(property);
+  }
+
+  return itemType;
+}
+
+function getEnum(code: string): any{
+
+  let itemType = struct.typeStruct();
+
+  itemType.type = "enum";
+
+  itemType.package = code.match(/namespace ((\s*?.*?)*?)\n/g)[0].replace(/namespace |\n/g, '');
+
+  let typeDoc = code.match(/\/\*\*((\s*?.*?)*?)enum/);
+  if (typeDoc.length > 2) {
+    itemType.doc = typeDoc[1].replace(/\*|\n|\/| /g, '');
+  }
+  itemType.name = code.match(/enum((\s*?.*?)*?){/)[0].replace(/enum|{| /g, '');
+
+  let propertiesTmp = code.match(/\{((\s*?.*?)*?)\}/)[0];
+  let properties = propertiesTmp.match(/(    |  )[a-zA-Z]((\s*?.*?)*?)\n/g);
+  let propertyDoc = propertiesTmp.match(/\/\*\*((\s*?.*?)*?)\//g);
+  if (!properties) {
+    throw new Error(`no properties for: ${itemType.name}`);
+  }
+  if (!propertyDoc) {
+    throw new Error(`no property's comment for: ${itemType.name}`);
+  }
+  if (properties.length != propertyDoc.length) {
+    throw new Error(`lost some properties comment: ${itemType.name}`);
+  }
+  for (let i in properties) {
+    let property = {
+      name: properties[i].replace(/ |,|\n/g,''),
+      doc: propertyDoc[i].match(/\* ((\s*?.*?)*?)\n/g)[0].replace(/\* |\n/g, '')
+    }
     itemType.properties.push(property);
   }
 

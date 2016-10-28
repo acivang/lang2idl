@@ -43,8 +43,13 @@ export function convert(path: string): void {
   if (idl.types.length === 0) {
     idl.types.push({});
   }
+  let jsonIdl: any = JSON.stringify(idl);
+  fileStream.writeFile(path + `idl.json`, jsonIdl);
 
-  console.log(JSON.stringify(idl));
+  jsonIdl = `export let jsonIdl = ${ jsonIdl }`;
+
+  fileStream.writeFile(path + `idl.ts`, jsonIdl);
+  console.log(jsonIdl);
 }
 
 function getInterface(code: string): any {
@@ -151,6 +156,9 @@ function getMethod(methodCode: string, packageName: string, code: string): any {
       methodArg.doc = argsDoc[i].replace(/@param |\n/g, '');
       method.args.push(methodArg);
     }
+  }
+  if(method.args.length === 0){
+    method.args.push({});
   }
   if (method.throws.length === 0) {
     method.throws.push({});
