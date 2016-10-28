@@ -57,18 +57,18 @@ export function convert(path: string): void {
       }
       // methodCode.push(doc.join("\n"));
       let methodLine: string;
-      if (method.return.type.type.indexOf(".") < 0) {
-        methodLine = `${method.name}(${args.join(", ")}): Promise<${method.return.type.type}>`;
+      if (method.return.type.indexOf(".") < 0) {
+        methodLine = `${method.name}(${args.join(", ")}): Promise<${method.return.type}>`;
       } else {
-        namespaceName = method.return.type.type.substring(0, method.return.type.type.lastIndexOf("."));
+        namespaceName = method.return.type.substring(0, method.return.type.lastIndexOf("."));
         if (!referencesDic[namespaceName]) {
           referencesDic[namespaceName] = true;
           references.push(`/// <reference path="${namespaceName}.ts" />`);
         }
         let typeParams: Array<string> = new Array();
-        if (method.return.type.typeParams) {
-          for (let m: number = 0; m < method.return.type.typeParams.length; m++) {
-            let typeParam: any = method.return.type.typeParams[m];
+        if (method.return.typeParams) {
+          for (let m: number = 0; m < method.return.typeParams.length; m++) {
+            let typeParam: any = method.return.typeParams[m];
             if (typeParam.indexOf(".") > -1) {
               namespaceName = typeParam.substring(0, typeParam.lastIndexOf("."));
               typeParam = typeParam.substring(typeParam.lastIndexOf(".") + 1);
@@ -80,10 +80,10 @@ export function convert(path: string): void {
             typeParams.push(typeParam);
           }
 
-          methodLine = `${method.name}(${args.join(", ")}): Promise<${method.return.type.type.substring(method.return.type.type.lastIndexOf(".") + 1)}<${typeParams.join(", ")}>>`;
+          methodLine = `${method.name}(${args.join(", ")}): Promise<${method.return.type.substring(method.return.type.lastIndexOf(".") + 1)}<${typeParams.join(", ")}>>`;
         } else {
 
-          methodLine = `${method.name}(${args.join(", ")}): Promise<${method.return.type.type.substring(method.return.type.type.lastIndexOf(".") + 1)}>`;
+          methodLine = `${method.name}(${args.join(", ")}): Promise<${method.return.type.substring(method.return.type.lastIndexOf(".") + 1)}>`;
         }
       }
       methodCode.push(`${ doc.join('\n') }\n${ methodLine }`)
@@ -94,7 +94,7 @@ export function convert(path: string): void {
     interfaceCodes.push("}");
     console.log(interfaceCodes.join("\n"));
     path = path.substring(0, path.lastIndexOf('/')+1);
-    fileStream.writeFileSync(path + 'result.ts', interfaceCodes.join("\n"));
+    fileStream.writeFileSync(path + `${item.name}.ts`, interfaceCodes.join("\n"));
   }
 
   for (let i: number = 0; i < types.length; i++) {
@@ -105,15 +105,25 @@ export function convert(path: string): void {
       if (item.doc) {
         typeCodes.push(`//${item.doc}`);
       }
+      if(item.type === "class"){
       typeCodes.push(`class ${item.name}{`);
       for (let property of item.properties) {
         typeCodes.push(`//${property.doc}`);
         typeCodes.push(`public ${property.name}: ${property.type};`);
         typeCodes.push("\n");
       }
+      }else if(item.type === "enum"){
+      typeCodes.push(`export enum ${item.name}{`);
+      for (let property of item.properties) {
+        typeCodes.push(`//${property.doc}`);
+        typeCodes.push(`${property.name},`);
+        typeCodes.push("\n");
+      }
+      }
       typeCodes.push("}");
       typeCodes.push("}");
 
+      fileStream.writeFileSync(path + `${item.name}.ts`, typeCodes.join("\n"));
       console.log(typeCodes.join("\n"));
     }
   }

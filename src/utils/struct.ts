@@ -41,6 +41,7 @@ export function methodStruct(): any{
 export function typeStruct(): any{
   let itemType = {
     package: '',
+    type: '',
     name: '',
     doc: '',
     meta: {},

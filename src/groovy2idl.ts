@@ -22,7 +22,7 @@ export function convert(path: string): void {
   let idl = struct.idlStruct();
   for (let index in filesPath) {
     let file = filesPath[index];
-    if (file.lastIndexOf('DTO.groovy') < 0 && file.lastIndexOf('Facade.groovy') < 0) {
+    if (file.lastIndexOf('.groovy') < 0) {
       continue;
     }
     let code = fileStream.readFileSync(path + file).toString();
@@ -31,7 +31,7 @@ export function convert(path: string): void {
       let itemInterface = getInterface(code);
       idl.interfaces.push(itemInterface);
 
-    } else if (file.lastIndexOf('DTO.groovy') > -1) {
+    } else if (file.lastIndexOf('.groovy') > -1) {
 
       let itemType = getType(code);
       idl.types.push(itemType);
@@ -103,7 +103,13 @@ function getMethod(methodCode: string, packageName: string, code: string): any {
     method.name = methodName[0].match(/[ ](w?.)*\(/)[0].replace(/ |\(/g, '');
   }
   method.return.type = methodName[0].match(/[a-zA-Z](w?.)* /)[0].replace(' ', '');
-  method.return.type = getTypeParam(method.return.type, code, packageName);
+  let typeWithTypeParams = getTypeParam(method.return.type, code, packageName);
+  if (typeWithTypeParams.typeParams) {
+    method.return.type = typeWithTypeParams.type;
+    method.return.typeParams = typeWithTypeParams.typeParams;
+  } else {
+    method.return.type = typeWithTypeParams.type;
+  }
 
   let doces = methodCode.match(/\*((\s*?.*?)*?)\n/g)
   if (!doces) {
@@ -156,8 +162,20 @@ function getMethod(methodCode: string, packageName: string, code: string): any {
 function getType(code: string): any {
 
   let itemType = struct.typeStruct();
+  if(/class ((\s*.)*)DTO/.test(code)){
+    itemType = getDTO(code);
+  } else if(code.indexOf('enum ') > -1){
+    itemType = getEnum(code);
+  }
+  return itemType;
+}
 
+function getDTO(code: string): any{
+
+  let itemType = struct.typeStruct();
+  itemType.type = "class";
   itemType.package = code.match(/package((\s*?.*?)*?)\n/g)[0].replace(/package |\n/g, '');
+
   let typeDoc = code.match(/\/\*\*((\s*?.*?)*?)class/);
   if (typeDoc.length > 2) {
     itemType.doc = typeDoc[1].replace(/\*|\n|\/| /g, '');
@@ -188,6 +206,43 @@ function getType(code: string): any {
       typeParams: typeParam.typeParams,
       doc: propertyDoc[i].match(/\* ((\s*?.*?)*?)\n/g)[0].replace(/\* |\n/g, '')
     };
+    itemType.properties.push(property);
+  }
+  
+  return itemType;
+}
+
+function getEnum(code: string): any{
+
+  let itemType = struct.typeStruct();
+
+  itemType.type = "enum";
+
+  itemType.package = code.match(/package((\s*?.*?)*?)\n/g)[0].replace(/package |\n/g, '');
+
+  let typeDoc = code.match(/\/\*\*((\s*?.*?)*?)enum/);
+  if (typeDoc.length > 2) {
+    itemType.doc = typeDoc[1].replace(/\*|\n|\/| /g, '');
+  }
+  itemType.name = code.match(/enum((\s*?.*?)*?){/)[0].replace(/enum|{| /g, '');
+
+  let propertiesTmp = code.match(/\{((\s*?.*?)*?)\}/)[0];
+  let properties = propertiesTmp.match(/(    |  )[a-zA-Z]((\s*?.*?)*?)\n/g);
+  let propertyDoc = propertiesTmp.match(/\/\*\*((\s*?.*?)*?)\//g);
+  if (!properties) {
+    throw new Error(`no properties for: ${itemType.name}`);
+  }
+  if (!propertyDoc) {
+    throw new Error(`no property's comment for: ${itemType.name}`);
+  }
+  if (properties.length != propertyDoc.length) {
+    throw new Error(`lost some properties comment: ${itemType.name}`);
+  }
+  for (let i in properties) {
+    let property = {
+      name: properties[i].replace(/ |,|\n/g,''),
+      doc: propertyDoc[i].match(/\* ((\s*?.*?)*?)\n/g)[0].replace(/\* |\n/g, '')
+    }
     itemType.properties.push(property);
   }
 
