@@ -2,15 +2,15 @@ import * as fileStream from 'fs';
 
 import * as dataType from './utils/type';
 import * as struct from './utils/struct';
+import { Tools }from './utils/tools';
 
 const rpcPackage: string = 'org.nofdev.rpc.';
 
-let _files: string[] = [];
-
 export function convert(path: string): void {
   let isDir: boolean = false;
+  let tools = new Tools();
   let idl = struct.idlStruct();
-  let fils: string[] = getAllFile(path);
+  let fils: string[] = tools.getAllFiles(path);
 
   for (let file of fils) {
 
@@ -41,29 +41,6 @@ export function convert(path: string): void {
 
   jsonIdl = `export let jsonIdl = ${jsonIdl}`;
   fileStream.writeFile(path + `idl.ts`, jsonIdl);
-  _files = [];
-}
-
-function getAllFile(path: string): string[] {
-
-  if (!fileStream.existsSync(path)) {
-    throw new Error(`no such file or directory, open '${path}'`);
-  }
-
-  if (fileStream.lstatSync(path).isDirectory()) {
-    for (let file of fileStream.readdirSync(path)) {
-      let fullPath = `${path}${file}`;
-      if (fileStream.lstatSync(fullPath).isDirectory()) {
-        getAllFile(`${fullPath}/`);
-      } else if(file.indexOf(".groovy") > -1){
-        _files.push(fullPath);
-      }
-    }
-  } else if(path.indexOf(".groovy") > -1){
-    _files.push(path);
-  }
-
-  return _files;
 }
 
 function getInterface(code: string): any {

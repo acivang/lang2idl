@@ -2,30 +2,19 @@ import * as fileStream  from 'fs';
 
 import * as dataType from './utils/type';
 import * as struct from './utils/struct';
+import { Tools }from './utils/tools';
 
 const namespace: string = 'org.nofdev.rpc.';
 
 let usings: string = '';
 
 export function convert(path: string): void {
-
   let isDir: boolean = false;
-  if (path.lastIndexOf('.cs') < 0 || path.lastIndexOf('*.cs') > 0) {
-    isDir = true;
-  }
-  if (!fileStream.existsSync(path)) {
-    throw new Error(`no such file or directory, open '${path}'`);
-  }
-  let filesPath: string[];
-  if (isDir) {
-    filesPath = fileStream.readdirSync(path);
-  } else {
-    filesPath = [path];
-  }
+  let tools = new Tools();
   let idl = struct.idlStruct();
+  let fils: string[] = tools.getAllFiles(path);
 
-  for (let index in filesPath) {
-    let file = filesPath[index];
+  for (let file of fils) {
     if (file.lastIndexOf('DTO.cs') < 0 && file.lastIndexOf('Facade.cs') < 0) {
       continue;
     }
