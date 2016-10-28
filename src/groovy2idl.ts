@@ -5,27 +5,19 @@ import * as struct from './utils/struct';
 
 const rpcPackage: string = 'org.nofdev.rpc.';
 
+let _files: string[] = [];
+
 export function convert(path: string): void {
   let isDir: boolean = false;
-  if (path.lastIndexOf('.groovy') < 0 || path.lastIndexOf('*.groovy') > 0) {
-    isDir = true;
-  }
-  if (!fileStream.existsSync(path)) {
-    throw new Error(`no such file or directory, open '${path}'`);
-  }
-  let filesPath: string[];
-  if (isDir) {
-    filesPath = fileStream.readdirSync(path);
-  } else {
-    filesPath = [path];
-  }
   let idl = struct.idlStruct();
-  for (let index in filesPath) {
-    let file = filesPath[index];
+  let fils: string[] = getAllFile(path);
+
+  for (let file of fils) {
+
     if (file.lastIndexOf('.groovy') < 0) {
       continue;
     }
-    let code = fileStream.readFileSync(path + file).toString();
+    let code = fileStream.readFileSync(file).toString();
     if (file.lastIndexOf('Facade.groovy') > -1) {
 
       let itemInterface = getInterface(code);
@@ -37,7 +29,6 @@ export function convert(path: string): void {
       idl.types.push(itemType);
 
     }
-
   }
 
   if (idl.types.length === 0) {
@@ -46,10 +37,33 @@ export function convert(path: string): void {
   let jsonIdl: any = JSON.stringify(idl);
   fileStream.writeFile(path + `idl.json`, jsonIdl);
 
-  jsonIdl = `export let jsonIdl = ${ jsonIdl }`;
-
-  fileStream.writeFile(path + `idl.ts`, jsonIdl);
   console.log(jsonIdl);
+
+  jsonIdl = `export let jsonIdl = ${jsonIdl}`;
+  fileStream.writeFile(path + `idl.ts`, jsonIdl);
+  _files = [];
+}
+
+function getAllFile(path: string): string[] {
+
+  if (!fileStream.existsSync(path)) {
+    throw new Error(`no such file or directory, open '${path}'`);
+  }
+
+  if (fileStream.lstatSync(path).isDirectory()) {
+    for (let file of fileStream.readdirSync(path)) {
+      let fullPath = `${path}${file}`;
+      if (fileStream.lstatSync(fullPath).isDirectory()) {
+        getAllFile(`${fullPath}/`);
+      } else if(file.indexOf(".groovy") > -1){
+        _files.push(fullPath);
+      }
+    }
+  } else if(path.indexOf(".groovy") > -1){
+    _files.push(path);
+  }
+
+  return _files;
 }
 
 function getInterface(code: string): any {
@@ -157,7 +171,7 @@ function getMethod(methodCode: string, packageName: string, code: string): any {
       method.args.push(methodArg);
     }
   }
-  if(method.args.length === 0){
+  if (method.args.length === 0) {
     method.args.push({});
   }
   if (method.throws.length === 0) {
@@ -170,15 +184,15 @@ function getMethod(methodCode: string, packageName: string, code: string): any {
 function getType(code: string): any {
 
   let itemType = struct.typeStruct();
-  if(/class ((\s*.)*)DTO/.test(code)){
+  if (/class ((\s*.)*)DTO/.test(code)) {
     itemType = getDTO(code);
-  } else if(code.indexOf('enum ') > -1){
+  } else if (code.indexOf('enum ') > -1) {
     itemType = getEnum(code);
   }
   return itemType;
 }
 
-function getDTO(code: string): any{
+function getDTO(code: string): any {
 
   let itemType = struct.typeStruct();
   itemType.type = "class";
@@ -216,11 +230,11 @@ function getDTO(code: string): any{
     };
     itemType.properties.push(property);
   }
-  
+
   return itemType;
 }
 
-function getEnum(code: string): any{
+function getEnum(code: string): any {
 
   let itemType = struct.typeStruct();
 
@@ -248,7 +262,7 @@ function getEnum(code: string): any{
   }
   for (let i in properties) {
     let property = {
-      name: properties[i].replace(/ |,|\n/g,''),
+      name: properties[i].replace(/ |,|\n/g, ''),
       doc: propertyDoc[i].match(/\* ((\s*?.*?)*?)\n/g)[0].replace(/\* |\n/g, '')
     }
     itemType.properties.push(property);
