@@ -37,10 +37,11 @@ export function convert(path: string): void {
   let jsonIdl: any = JSON.stringify(idl);
   fileStream.writeFile(path + `idl.json`, jsonIdl);
 
-  console.log(jsonIdl);
+  console.log(`json idl file had created at ${ path }`);
 
   jsonIdl = `export let jsonIdl = ${jsonIdl}`;
   fileStream.writeFile(path + `idl.ts`, jsonIdl);
+  console.log(`idl typescript file file had created at ${ path }`);
 }
 
 function getInterface(code: string): any {

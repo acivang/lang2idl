@@ -97,7 +97,8 @@ export function convert(path: string): void {
     interfaceCodes.push("}");
     console.log(interfaceCodes.join("\n"));
     path = path.substring(0, path.lastIndexOf('/')+1);
-    fileStream.writeFileSync(path + `${item.name}.ts`, interfaceCodes.join("\n"));
+    fileStream.writeFileSync(`${path }${item.name}.ts`, interfaceCodes.join("\n"));
+    console.log(`${item.name}.ts had created at ${ path }.`);
   }
 
   for (let i: number = 0; i < types.length; i++) {
