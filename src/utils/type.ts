@@ -1,5 +1,5 @@
-
-let IdlTypeDictionary: { [type: string]: string } = {
+//将其他语言类型转换为ts类型的字典
+let tsTypeMap: { [type: string]: string } = {
   ['float']: 'decimal',
   ['double']: 'decimal',
   ['int']: 'number',
@@ -20,26 +20,57 @@ let IdlTypeDictionary: { [type: string]: string } = {
   ['list']: 'Array',
   ['map']: 'Array',
   ['dictionary']: 'Array',
-  ['void']: 'void',
-  ['def']: 'void'
+  ['void']: 'void'
 };
+
+//将其他语言类型转换为groovy类型的字典
+let groovyTypeMap: { [type: string]: string } = {
+  ['decimal']: 'double',
+  ['number']: 'int',
+  ['string']: 'String',
+  ['Date']: 'Date',
+  ['void']: 'def'
+}
 
 export function toIdlType(type: string): string {
   let idlType = 'undefined';
   if (type) {
-    idlType = IdlTypeDictionary[type.toLowerCase()];
+    idlType = tsTypeMap[type.toLowerCase()];
     if (!idlType) {
-      if (type.indexOf("List")) {
-        idlType = IdlTypeDictionary["list"];
-      } else if (type.indexOf("Map")) {
-        idlType = IdlTypeDictionary["map"];
-      } else if (type.indexOf("Dictionary")) {
-        idlType = IdlTypeDictionary["dictionary"];
-      }
-      if(type.indexOf("<") > -1){
-        idlType = `${ idlType }<any>`
+      if (type.indexOf("list") > -1) {
+        idlType = tsTypeMap["list"];
       }
     }
   }
   return idlType;
+}
+
+export function toLangType(type: string, lang: string): string {
+  let langType = 'null';
+
+  return langType;
+}
+
+
+export function canImport(type: string): boolean {
+  let result: boolean = true;
+
+  switch (type.toLocaleLowerCase()) {
+    case "map":
+      result = false;
+      break;
+    case "list":
+      result = false;
+      break;
+    case "array":
+      result = false;
+      break;
+    case "dictionary":
+      result = false;
+      break;
+    default:
+      result = true;
+  }
+
+  return result;
 }

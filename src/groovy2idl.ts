@@ -2,9 +2,25 @@ import * as fileStream from 'fs';
 
 import * as dataType from './utils/type';
 import * as struct from './utils/struct';
-import { Tools }from './utils/tools';
+import { Tools } from './utils/tools';
 
 const rpcPackage: string = 'org.nofdev.rpc.';
+
+//groovy类型字典
+let groovyTypeMap: { [type: string]: boolean } = {
+  ['double']: true,
+  ['flout']: true,
+  ['String']: true,
+  ['byte']: true,
+  ['short']: true,
+  ['int']: true,
+  ['char']: true,
+  ['Boolean']: true,
+  ['Map']: true,
+  ['List']: true,
+  ['void']: true,
+  ['Object']: true
+};
 
 export function convert(path: string): void {
   let isDir: boolean = false;
@@ -37,11 +53,11 @@ export function convert(path: string): void {
   let jsonIdl: any = JSON.stringify(idl);
   fileStream.writeFile(path + `idl.json`, jsonIdl);
 
-  console.log(`json idl file had created at ${ path }`);
+  console.log('\x1b[32m', `json idl file had created at ${path}`, '\x1b[0m');
 
   jsonIdl = `export let jsonIdl = ${jsonIdl}`;
   fileStream.writeFile(path + `idl.ts`, jsonIdl);
-  console.log(`idl typescript file file had created at ${ path }`);
+  console.log('\x1b[32m', `idl typescript file file had created at ${path}`, '\x1b[0m');
 }
 
 function getInterface(code: string): any {
@@ -99,7 +115,7 @@ function getMethod(methodCode: string, packageName: string, code: string): any {
   else {
     method.name = methodName[0].match(/[ ](w?.)*\(/)[0].replace(/ |\(/g, '');
   }
-  method.return.type = methodName[0].match(/[a-zA-Z](w?.)* /)[0].replace(' ', '');
+  method.return.type = methodName[0].match(/[a-zA-Z](w?.)* /)[0].replace(/ | /g, '');
   let typeWithTypeParams = getTypeParam(method.return.type, code, packageName);
   if (typeWithTypeParams.typeParams) {
     method.return.type = typeWithTypeParams.type;
@@ -119,34 +135,36 @@ function getMethod(methodCode: string, packageName: string, code: string): any {
     method.return.doc = docReturn[0].replace(/@return |\n/g, '');
   }
   let argsDoc = methodCode.match(/\@param((\s*?.*?)*?)\n/g);
-  let args = methodCode.match(/\(((\s*?.*?)*?)\)/g)[0].replace(/\(|\)/g, '').split(',');
-
-  for (let i in args) {
-    let methodArg: any = {
-      name: '',
-      type: '',
-      doc: ''
-    }
-    let tmp = args[i].split(' ');
-    let paramType = tmp[0];
-    if (args[i].indexOf(' ') === 0) {
-      paramType = tmp[1];
-    }
-    if (paramType.length === 0) {
-      paramType = tmp[1];
-    }
-    let argType = getTypeParam(paramType, code, packageName);
-    if (argType.type !== "undefined") {
-      methodArg.type = argType.type;
-      if (argType.typeParams) {
-        methodArg.typeParams = argType.typeParams;
+  let argsTmp = methodCode.match(/\(((\s*?.*?)*?)\)/g)[0].replace(/\(|\)/g, '');
+  if (argsTmp.length > 0) {
+    let args = argsTmp.split(',');
+    for (let i in args) {
+      let methodArg: any = {
+        name: '',
+        type: '',
+        doc: ''
       }
-      methodArg.name = tmp[1];
+      let tmp = args[i].split(' ');
+      let paramType = tmp[0];
       if (args[i].indexOf(' ') === 0) {
-        methodArg.name = tmp[2];
+        paramType = tmp[1];
       }
-      methodArg.doc = argsDoc[i].replace(/@param |\n/g, '');
-      method.args.push(methodArg);
+      if (paramType.length === 0) {
+        paramType = tmp[1];
+      }
+      let argType = getTypeParam(paramType, code, packageName);
+      if (argType.type !== "undefined") {
+        methodArg.type = argType.type;
+        if (argType.typeParams) {
+          methodArg.typeParams = argType.typeParams;
+        }
+        methodArg.name = tmp[1];
+        if (args[i].indexOf(' ') === 0) {
+          methodArg.name = tmp[2];
+        }
+        methodArg.doc = argsDoc[i].replace(/@param |\n/g, '');
+        method.args.push(methodArg);
+      }
     }
   }
   if (method.args.length === 0) {
@@ -250,29 +268,28 @@ function getEnum(code: string): any {
 }
 
 function getTypeParam(typeCode: string, code: string, packageName?: string): any {
-  let propType = dataType.toIdlType(typeCode);
+  let propType: string;
   let propTypeParams = [""];
   propTypeParams.pop();
-  if (!propType) {//无类型或非数据类型，非数据类型需要处理
-    if (typeCode.indexOf('<') > -1) {
-      let typeTmp = typeCode.split('<');
-      propType = typeTmp[0];
-      typeTmp[1] = typeTmp[1].replace(/\>| /g, '');
-      if (typeTmp[1].indexOf(',') > -1) {
-        let tmpPropTypeParams = typeTmp[1].split(',');
-        propTypeParams.push(getTypeWithPackage(tmpPropTypeParams[0], code, packageName));
-        propTypeParams.push(getTypeWithPackage(tmpPropTypeParams[1], code, packageName));
-      }
-      else {
-        propTypeParams.push(getTypeWithPackage(typeTmp[1], code, packageName));
-      }
-    } else {
-      propType = typeCode;
+
+  if (typeCode.indexOf('<') > -1) {
+    let typeTmp = typeCode.split('<');
+    propType = typeTmp[0];
+    typeTmp[1] = typeTmp[1].replace(/\>| /g, '');
+    if (typeTmp[1].indexOf(',') > -1) {
+      let tmpPropTypeParams = typeTmp[1].split(',');
+      propTypeParams.push(getTypeWithPackage(tmpPropTypeParams[0], code, packageName));
+      propTypeParams.push(getTypeWithPackage(tmpPropTypeParams[1], code, packageName));
     }
-
-    propType = getTypeWithPackage(propType, code, packageName);
-
+    else {
+      propTypeParams.push(getTypeWithPackage(typeTmp[1], code, packageName));
+    }
+  } else {
+    propType = typeCode;
   }
+
+  propType = getTypeWithPackage(propType, code, packageName);
+
   if (propTypeParams.length > 0) {
     return {
       type: propType,
@@ -284,8 +301,11 @@ function getTypeParam(typeCode: string, code: string, packageName?: string): any
   }
 }
 
-function getTypeWithPackage(type: string, code: string, packageName: string): string {
 
+function getTypeWithPackage(type: string, code: string, packageName: string): string {
+  if (groovyTypeMap[type]) {
+    return type;
+  }
   let packageReg = new RegExp(`import ((\\w\\.?)*?)${type}`);
   let thisPackage = code.match(packageReg);
   if (thisPackage) {
