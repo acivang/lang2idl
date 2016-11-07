@@ -20,6 +20,7 @@ export function convert(path: string): void {
     throw error;
   }
 
+  path = path.substring(0, path.lastIndexOf('/') + 1);
   let interfaces: any = code.interfaces;
   let types: any = code.types;
 
@@ -104,7 +105,7 @@ export function convert(path: string): void {
         }
       }
 
-      doc.push(` * @return ${method.return.doc ? method.return.doc : 'void' }`);
+      doc.push(` * @return ${method.return.doc ? method.return.doc : 'void'}`);
       doc.push(' *');
       doc.push(' */');
 
@@ -177,7 +178,6 @@ export function convert(path: string): void {
 
           methodLine = `${method.name}(${args.join(", ")}): Promise<${method.return.type.substring(method.return.type.lastIndexOf(".") + 1)}>`;
         }
-        // methodLine = `${method.name}(${args.join(", ")}): Promise<any>`;
       }
       methodCode.push(`${doc.join('\n')}\n${methodLine}`)
     }
@@ -185,8 +185,7 @@ export function convert(path: string): void {
     interfaceCodes.push(methodCode.join(";\n\n"));
     interfaceCodes.push("}");
     interfaceCodes.push("}");
-    
-    path = path.substring(0, path.lastIndexOf('/') + 1);
+
     fileStream.writeFileSync(`${path}${item.name}.ts`, interfaceCodes.join("\n"));
     console.log('\x1b[32m', `file had created: ${path}${item.name}.ts.`, '\x1b[0m');
   }

@@ -10,16 +10,20 @@ let doc = new Ducoment();
 let groovyTypeMap: { [type: string]: boolean } = {
   ['double']: true,
   ['flout']: true,
-  ['String']: true,
+  ['string']: true,
   ['byte']: true,
   ['short']: true,
   ['int']: true,
   ['char']: true,
   ['boolean']: true,
-  ['Map']: true,
-  ['List']: true,
+  ['map']: true,
+  ['list']: true,
   ['void']: true,
-  ['Object']: true
+  ['object']: true,
+  ['bigdecimal']: true,
+  ['biginteger']: true,
+  ['integer']: true,
+  ['long']: true
 };
 let imports: string[];
 
@@ -61,7 +65,7 @@ export let getType = (typeCode: string, code: string): any => {
 
 
 let getTypePackage = (type: string, packageName: string): string => {
-  if (groovyTypeMap[type]) {
+  if (groovyTypeMap[type.toLowerCase()]) {
     return type;
   }
 
