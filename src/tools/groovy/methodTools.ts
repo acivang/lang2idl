@@ -8,22 +8,6 @@ import { MissingMethodError, MissingCommentError, CodeFormatError } from '../../
 
 let doc = new Ducoment();
 
-//groovy类型字典
-// let groovyTypeMap: { [type: string]: boolean } = {
-//   ['double']: true,
-//   ['flout']: true,
-//   ['String']: true,
-//   ['byte']: true,
-//   ['short']: true,
-//   ['int']: true,
-//   ['char']: true,
-//   ['Boolean']: true,
-//   ['Map']: true,
-//   ['List']: true,
-//   ['void']: true,
-//   ['Object']: true
-// };
-
 
 export let getMethods = (code: string): any => {
   let methods: any = [];
