@@ -2,7 +2,7 @@ import * as fileStream  from 'fs';
 
 import * as dataType from './utils/type';
 import * as struct from './utils/struct';
-import { Tools }from './utils/tools';
+import { FileHelper } from './utils/files';
 
 const namespace: string = 'org.nofdev.rpc.';
 
@@ -10,9 +10,9 @@ let usings: string = '';
 
 export function convert(path: string): void {
   let isDir: boolean = false;
-  let tools = new Tools();
+  let fileHelper = new FileHelper();
   let idl = struct.idlStruct();
-  let fils: string[] = tools.getAllFiles(path);
+  let fils: string[] = fileHelper.getAllFiles(path);
 
   for (let file of fils) {
     if (file.lastIndexOf('DTO.cs') < 0 && file.lastIndexOf('Facade.cs') < 0) {
@@ -221,7 +221,7 @@ function getEnum(code: string): any{
 }
 
 function getTypeParam(typeCode: string, code: string, packageName?: string): any {
-  let propType = dataType.toIdlType(typeCode);
+  let propType: string;
   let propTypeParams = [""];
   propTypeParams.pop();
   if (!propType) {//无类型或非数据类型，非数据类型需要处理

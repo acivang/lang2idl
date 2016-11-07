@@ -32,7 +32,7 @@ let groovyTypeMap: { [type: string]: string } = {
   ['void']: 'def'
 }
 
-export function toIdlType(type: string): string {
+export function toTsType(type: string): string {
   let idlType = 'undefined';
   if (type) {
     idlType = tsTypeMap[type.toLowerCase()];

@@ -1,13 +1,13 @@
 import * as fileStream from 'fs';
 
-export class Tools {
+export class FileHelper {
 
   private _files: string[] = [];
 
   public getAllFiles(path: string): string[] {
 
     if (!fileStream.existsSync(path)) {
-      throw new Error(`no such file or directory, open '${path}'`);
+      throw new Error(`no such file or directory: '${path}'`);
     }
 
     if (fileStream.lstatSync(path).isDirectory()) {
@@ -15,11 +15,11 @@ export class Tools {
         let fullPath = `${path}${file}`;
         if (fileStream.lstatSync(fullPath).isDirectory()) {
           this.getAllFiles(`${fullPath}/`);
-        } else if (file.indexOf(".groovy") > -1) {
+        } else if (file.indexOf(".groovy") > -1 || file.indexOf(".cs") > -1) {
           this._files.push(fullPath);
         }
       }
-    } else if (path.indexOf(".groovy") > -1) {
+    } else if (path.indexOf(".groovy") > -1 || path.indexOf(".cs") > -1) {
       this._files.push(path);
     }
 
