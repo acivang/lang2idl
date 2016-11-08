@@ -25,4 +25,19 @@ export class FileHelper {
 
     return this._files;
   }
+
+  public saveFile(path: string, text: string) {
+    let directory: string = path.substring(0, path.lastIndexOf('/'));
+    if (!fileStream.existsSync(directory)) {
+      let folders: string[] = directory.split('/');
+      let folderPath: string = '';
+      for (let folder of folders) {
+        folderPath = `${folderPath}${folder}/`;
+        if (!fileStream.existsSync(folderPath)) {
+          fileStream.mkdirSync(folderPath);
+        }
+      }
+    }
+    fileStream.writeFileSync(`${path}`, text);
+  }
 }
