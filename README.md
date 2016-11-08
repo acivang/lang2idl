@@ -47,4 +47,4 @@
 
 5. ### About property(groovy)
 
-      Property code must end with ';' for split property code block in groovy.
+      <del>Property code must end with ';' for split property code block in groovy.</del>
