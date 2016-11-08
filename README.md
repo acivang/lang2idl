@@ -40,9 +40,7 @@
 
 4. ### About import
 
-      If import other package, must not use '*' in import code line, because the converter need match the custom type's package, use '*' can't match it nicety. 
-
-      As well, 
+      <del>If import other package, must not use '\*' in import code line, because the converter need match the custom type's package, use '\*' can't match it nicety. </del>
 
 
 5. ### About property(groovy)
