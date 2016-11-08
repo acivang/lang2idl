@@ -1,8 +1,8 @@
-1. What is it?
+1. ### What is it?
 
       this is a tool for create a json idl(interface description lanauge) from groovy/java/c# etc, and convert idl to typescript/java/groovy/c# etc.
 
-2. How use?
+2. ### How use?
 
       create json idl from groovy: npm run groovy2idl "groovy file dir path" 
 
@@ -11,7 +11,7 @@
       create typescript from json idl: npm run idl2ts "json idl file path"
 
 
-3. About code document
+3. ### About code document
  
       Standard code：
       
@@ -38,13 +38,13 @@
       Start with '@return' is the method return result comments.
 
 
-4. About import
+4. ### About import
 
       If import other package, must not use '*' in import code line, because the converter need match the custom type's package, use '*' can't match it nicety. 
 
       As well, 
 
 
-5. About property(groovy)
+5. ### About property(groovy)
 
       Property code must end with ';' for split property code block in groovy.
