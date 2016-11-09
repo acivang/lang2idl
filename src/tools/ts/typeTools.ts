@@ -17,7 +17,7 @@ export let getTypes = (types: any, path: string) => {
         typeCodes.push(' */');
       }
       if (item.type === "class") {
-        typeCodes.push(`class ${item.name}{`);
+        typeCodes.push(`export class ${item.name}{`);
         for (let property of item.properties) {
           typeCodes.push('\n/**')
           typeCodes.push(` * ${property.doc}`);

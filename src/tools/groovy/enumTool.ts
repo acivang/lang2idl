@@ -1,13 +1,13 @@
 
 import * as struct from '../../utils/struct';
 import * as utils from './utils';
-import { Ducoment } from './docTools';
-import * as propertyTools from './propertyTools';
+import { Ducoment } from './docTool';
+import * as propertyTools from './propertyTool';
 import { MissingMethodError, MissingCommentError, MissingPropertyError, CodeFormatError } from '../../utils/error';
 
 let doc = new Ducoment();
 
-export let getEnum = (code: string): any => {
+export let getEnums = (code: string, typeFilesMap: { [key: string]: string }): any => {
 
   let enumType = struct.typeStruct();
   enumType.type = "enum";
@@ -18,7 +18,7 @@ export let getEnum = (code: string): any => {
   
   enumType.name = utils.getObjectName(code);
 
-  enumType.properties = propertyTools.getPropertys(code);
+  enumType.properties = propertyTools.getPropertys(code, typeFilesMap);
 
   return enumType;
 }

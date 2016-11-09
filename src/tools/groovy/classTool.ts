@@ -1,13 +1,13 @@
 
 import * as struct from '../../utils/struct';
 import * as utils from './utils';
-import { Ducoment } from './docTools';
-import * as propertyTools from './propertyTools';
+import { Ducoment } from './docTool';
+import * as propertyTool from './propertyTool';
 import { MissingMethodError, MissingCommentError, MissingPropertyError, CodeFormatError } from '../../utils/error';
 
 let doc = new Ducoment();
 
-export let getClass = (code: string): any => {
+export let getClasses = (code: string, typeFilesMap: { [key: string]: string }): any => {
 
   let classType = struct.typeStruct();
   classType.type = "class";
@@ -18,7 +18,7 @@ export let getClass = (code: string): any => {
   
   classType.name = utils.getObjectName(code);
 
-  classType.properties = propertyTools.getPropertys(code);
+  classType.properties = propertyTool.getPropertys(code, typeFilesMap);
 
   return classType;
 }

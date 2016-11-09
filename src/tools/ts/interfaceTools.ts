@@ -115,7 +115,7 @@ export let getInterfaces = (interfaces: any, path: string) => {
         importName = method.return.type.substring(method.return.type.lastIndexOf(".") + 1);
         if (!importsDic[importName] && item.package !== importName && dataType.canImport(importName)) {
           importsDic[importName] = true;
-          imports.push(`import { ${importName} } from './${method.return.type.replace(/\./g, '/')}';`);
+          imports.push(`import { ${importName} } from './${method.return.type.replace(item.package + '.', '').replace(/\./g, '/').toLowerCase()}';`);
         }
 
         if (method.return.typeParams) {

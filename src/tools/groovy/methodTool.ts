@@ -1,33 +1,34 @@
 
 import * as struct from '../../utils/struct';
-import { Ducoment } from './docTools';
+import { Ducoment as Doc } from './docTool';
 import * as utils from './utils';
-import * as typeTools from './typeTools';
+import {typeTool} from './typeTool';
 import { MissingMethodError, MissingCommentError, CodeFormatError } from '../../utils/error';
 
 
-let doc = new Ducoment();
+let doc = new Doc();
+let typetool = new typeTool();
 
-
-export let getMethods = (code: string): any => {
+export let getMethods = (code: string, typeFilesMap: { [key: string]: string }): any => {
   let methods: any = [];
-
+  typetool.typeFilesMap = typeFilesMap;
   let methodCode = code.substring(code.indexOf("{"));
   if (!methodCode) {
     throw new MissingMethodError(`${utils.getObjectName(code)}.groovy/.java`);
   }
 
-  let methodBlocks = methodCode.split(';');
+  methodCode = methodCode.replace(/({|})\n\n|\n}|\n\n}/g, '');
+  let methodBlocks = methodCode.split('\n\n');//methodCode.split(';');
 
   for (let block of methodBlocks) {
-    let method = getMethod(block, code);
+    let method = getMethod(block);
     methods.push(method);
   }
 
   return methods;
 }
 
-let getMethod = (methodCode: string, code: string) => {
+let getMethod = (methodCode: string) => {
 
   let method = struct.methodStruct();
 
@@ -44,7 +45,7 @@ let getMethod = (methodCode: string, code: string) => {
 
   method.return.type = methodName[0].match(/[a-zA-Z](w?.)* /)[0].replace(/ | /g, '');
 
-  let typeWithTypeParams = typeTools.getType(method.return.type, code);
+  let typeWithTypeParams = typetool.getType(method.return.type);
   if (typeWithTypeParams.typeParams) {
     method.return.type = typeWithTypeParams.type;
     method.return.typeParams = typeWithTypeParams.typeParams;
@@ -83,7 +84,7 @@ let getMethod = (methodCode: string, code: string) => {
       if (paramType.length === 0) {
         paramType = tmp[1];
       }
-      let argType = typeTools.getType(paramType, code);
+      let argType = typetool.getType(paramType);
       if (argType.type !== "undefined") {
         methodArg.type = argType.type;
         if (argType.typeParams) {

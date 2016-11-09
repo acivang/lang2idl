@@ -1,15 +1,17 @@
 
 import * as utils from './utils';
-import { Ducoment } from './docTools';
-import * as typeTools from './typeTools';
+import { Ducoment as Doc } from './docTool';
+import { typeTool } from './typeTool';
 import { MissingPropertyError, MissingCommentError, PropertySybolError } from '../../utils/error';
 
 let fileName: string;
 let propertyName: string;
-let doc = new Ducoment();
 let packageName: string;
+let doc = new Doc();
+let typetool = new typeTool();
 
-export let getPropertys = (code: string): any => {
+export let getPropertys = (code: string, typeFilesMap: { [key: string]: string }): any => {
+  typetool.typeFilesMap = typeFilesMap;
   fileName = `${utils.getObjectName(code)}.groovy/.java`;
   packageName = utils.getPackage(code);
   let properties: any = [];
@@ -48,7 +50,7 @@ let getProperty = (propertyCode: string, code: string, isEnum?: boolean) => {
   let originCode = propertyCode.substring(propertyCode.indexOf('*/') + 2);
   if (!isEnum) {
     let tmp: string[] = originCode.match(/[_a-zA-Z]((\s*?.*?)*?)[a-zA-Z;\n\d]$/)[0].replace(/\n|;/g, '').split(' ');
-    let typeParam: any = typeTools.getType(tmp[0], code);
+    let typeParam: any = typetool.getType(tmp[0]);
     propertyName = tmp[1];
     if (typeParam.typeParams) {
       property = {

@@ -4,37 +4,54 @@ import * as dataType from './utils/type';
 import * as struct from './utils/struct';
 import { FileHelper } from './utils/files';
 import { log } from './utils/log';
-import * as utils from './tools/groovy/utils';
-import { getInterface } from './tools/groovy/interfaceTools';
-import { getClass } from './tools/groovy/classTools';
-import { getEnum } from './tools/groovy/enumTools';
+import { InterfaceTools } from './tools/groovy/interfaceTool';
+import { getClasses } from './tools/groovy/classTool';
+import { getEnums } from './tools/groovy/enumTool';
 import { MissingMethodError, MissingCommentError, MissingPropertyError, CodeFormatError } from './utils/error';
 
 const rpcPackage: string = 'org.nofdev.rpc.';
 
+let typeFilesMap: { [key: string]: string } = {};
+
 export function convert(path: string): void {
   let isDir: boolean = false;
+  let code: string;
+  let facadeFiles: string[] = [];
+  let typeFiles: string[] = [];
   let fileHelper = new FileHelper();
-  let idl = struct.idlStruct();
-  let fils: string[] = fileHelper.getAllFiles(path);
+  let interfaceTools = new InterfaceTools();
 
-  for (let file of fils) {
+  let idl = struct.idlStruct();
+  let files: string[] = fileHelper.getAllFiles(path);
+
+  for (let file of files) {
 
     if (file.lastIndexOf('.groovy') < 0) {
       continue;
     }
-    let code = fileStream.readFileSync(file).toString();
     if (file.lastIndexOf('Facade.groovy') > -1) {
-
-      let itemInterface = getInterface(code);
-      idl.interfaces.push(itemInterface);
-
+      facadeFiles.push(file);
     } else if (file.lastIndexOf('.groovy') > -1) {
+      typeFiles.push(file);
+      let key: string = file.substring(file.lastIndexOf('/') + 1, file.indexOf('.')).toLowerCase();
+      typeFilesMap[key] = file;
+    }
 
-      let itemType = getType(code);
-      if (itemType) {
-        idl.types.push(itemType);
-      }
+  }
+  
+  interfaceTools.typeFilesMap = typeFilesMap;
+
+  for (let file of facadeFiles) {
+    code = fileStream.readFileSync(file).toString();
+    let itemInterface = interfaceTools.getInterface(code);
+    idl.interfaces.push(itemInterface);
+  }
+
+  for (let file of typeFiles) {
+    code = fileStream.readFileSync(file).toString();
+    let itemType = getType(code);
+    if (itemType) {
+      idl.types.push(itemType);
     }
   }
 
@@ -53,8 +70,8 @@ export function convert(path: string): void {
 
 function getType(code: string): any {
   if (/class ((\s*.)*?)DTO/.test(code)) {
-    return getClass(code);
+    return getClasses(code, typeFilesMap);
   } else if (code.indexOf('enum ') > -1) {
-    return getEnum(code);
+    return getEnums(code, typeFilesMap);
   }
 }
