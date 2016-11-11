@@ -6,6 +6,7 @@ import { getMethods } from './methodTool';
 import { getMetaes } from './metaTool';
 import { MissingCommentError, CodeFormatError } from '../../utils/error';
 
+
 let interfaceName: string;
 let doc = new Doc();
 
@@ -17,7 +18,7 @@ export class InterfaceTools {
     let itemInterface = struct.interfaceStruct();
     let dicTypes = [''];
 
-    itemInterface.package = utils.getPackage(code);
+    itemInterface.package = utils.getNamespace(code);
 
     itemInterface.name = interfaceName = utils.getObjectName(code);
 
