@@ -66,7 +66,7 @@ export let getInterfaces = (interfaces: any, path: string) => {
           importName = arg.type.substring(arg.type.lastIndexOf(".") + 1);
           if (!importsDic[arg.type] && item.package !== arg.type.substring(0, arg.type.lastIndexOf('.'))) {
             importsDic[arg.type] = true;
-            imports.push(`import { ${importName} } from './${arg.type.replace(/\./g, '/').toLowerCase()}';`);
+            imports.push(`import { ${importName} } from './${arg.type.replace(item.package + '.', '').replace(/\./g, '/').toLowerCase()}';`);
           }
           args.push(`${arg.name}: ${importName}`);
         }
