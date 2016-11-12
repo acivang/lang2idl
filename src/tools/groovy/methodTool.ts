@@ -55,10 +55,10 @@ let getMethod = (methodCode: string) => {
 
   method.doc = doc.getObjectDoc(methodCode);
   method.return.doc = doc.getMethodReturnDoc(methodCode);
-  if (!method.doc || !method.method.doc) {
+  if (!method.doc || !method.return.doc) {
     throw new MissingCommentError(`${method.name}`);
   }
-  
+
   let argsDoces = doc.getMethodArgsDoc(methodCode);
   let argsTmp = methodCode.match(/\(((\s*?.*?)*?)\)/g)[0].replace(/\(|\)/g, '');
   if (argsTmp.length > 0) {

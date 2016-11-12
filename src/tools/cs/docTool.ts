@@ -17,7 +17,7 @@ export class Ducoment {
 
     let doces = code.match(/<summary>((\s*?.*?)*?)<\/summary>/);
 
-    return doces[0].replace(/<summary>|<\/summary>|\/\/\/|\n/g, '');
+    return doces[0].replace(/<summary>|<\/summary>|\/\/\/|\n| /g, '');
   }
 
   /**
@@ -33,7 +33,7 @@ export class Ducoment {
 
     let tempDoc = code.match(/<returns>((\s*?.*?)*?)<\/returns>/);
     if (tempDoc) {
-      doc = tempDoc[0].replace(/<returns>|<\/returns>|\n/g, '');
+      doc = tempDoc[0].replace(/<returns>|<\/returns>|\n| /g, '');
     }
 
     return doc;

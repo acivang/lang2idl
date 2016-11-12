@@ -1,7 +1,7 @@
 
 import * as struct from '../../utils/struct';
 import { namespaceTool } from './namespaceTool';
-import { MissingMethodError, MissingCommentError, CodeFormatError } from '../../utils/error';
+import { MissingMethodError, MissingCommentError, CodeFormatError, MissingFileError } from '../../utils/error';
 
 //groovy类型字典
 let csharpTypeMap: { [type: string]: boolean } = {
@@ -73,7 +73,9 @@ export class typeTool {
     if (csharpTypeMap[type.toLowerCase()]) {
       return type;
     }
-
+    if(!this.typeFilesMap[type.toLowerCase()]){
+      throw new MissingFileError(`${ type }.cs`);
+    }
     return namespacetool.getNamespaceParam(type, this.typeFilesMap[type.toLowerCase()]);
   }
 }

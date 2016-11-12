@@ -30,7 +30,7 @@ export function convert(path: string): void {
     if (file.toLowerCase().lastIndexOf('facade.cs') > -1) {
       facadeFiles.push(file);
 
-    } else if (file.toLowerCase().lastIndexOf('dto.cs') > -1) {
+    } else if (file.toLowerCase().lastIndexOf('.cs') > -1) {
 
       typeFiles.push(file);
       let key: string = file.substring(file.lastIndexOf('/') + 1, file.indexOf('.')).toLowerCase();
@@ -40,6 +40,7 @@ export function convert(path: string): void {
 
   }
 
+  interfaceTools.typeFilesMap = typeFilesMap;
   for (let file of typeFiles) {
     let typeCode = fileStream.readFileSync(file).toString();
     let itemType = getType(typeCode);

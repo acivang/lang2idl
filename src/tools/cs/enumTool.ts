@@ -1,11 +1,11 @@
 
 import * as struct from '../../utils/struct';
 import * as utils from './utils';
-import { Ducoment } from './docTool';
+import { Ducoment as Doc } from './docTool';
 import * as propertyTools from './propertyTool';
 import { MissingMethodError, MissingCommentError, MissingPropertyError, CodeFormatError } from '../../utils/error';
 
-let doc = new Ducoment();
+let doc = new Doc();
 
 export let getEnums = (code: string, typeFilesMap: { [key: string]: string }): any => {
 

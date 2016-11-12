@@ -25,8 +25,10 @@ export let getMethods = (code: string, typeFilesMap: { [key: string]: string }):
   methodCode = methodCode.replace(/{|}|\n/g, '');
   let methodBlocks = methodCode.split(';');
   for (let block of methodBlocks) {
-    let method = getMethod(block);
-    methods.push(method);
+    if (block.replace(/ /g, '').length > 0) {
+      let method = getMethod(block);
+      methods.push(method);
+    }
   }
 
   return methods;
@@ -36,18 +38,18 @@ let getMethod = (methodCode: string) => {
 
   let method = struct.methodStruct();
   //TODO: this is exception
-  let methodName = methodCode.match(/[a-zA-Z](\w?.)*\(/);
+  let methodName = methodCode.match(/        [a-zA-Z](w?.)*\(/);
   if (!methodName) {
     throw new CodeFormatError(`${methodCode}`);
   }
   if (methodName[0].indexOf('<') > -1) {
-    method.name = methodName[0].match(/(>[ ]|>)(\w?.)*\(/)[0].replace(/> |>|\(/g, '');
+    method.name = methodName[0].match(/(>[ ]|>)(w?.)*\(/)[0].replace(/> |>|\(/g, '');
   }
   else {
-    method.name = methodName[0].match(/[ ](\w?.)*\(/)[0].replace(/ |\(/g, '');
+    method.name = methodName[0].substring(methodName[0].lastIndexOf(" ") + 1).replace(/\(/g, '');//match(/[ ](w?.)*\(/)[0].replace(/ |\(/g, '');
   }
 
-  method.return.type = methodName[0].match(/[a-zA-Z](\w?.)* /)[0].replace(/ | /g, '');
+  method.return.type = methodName[0].match(/[a-zA-Z](w?.)* /)[0].replace(/ | /g, '');
 
   let typeWithTypeParams = typetool.getType(method.return.type);
   if (typeWithTypeParams.typeParams) {
@@ -59,7 +61,7 @@ let getMethod = (methodCode: string) => {
 
   method.doc = doc.getObjectDoc(methodCode);
   method.return.doc = doc.getMethodReturnDoc(methodCode);
-  if (!method.doc || !method.method.doc) {
+  if (!method.doc || !method.return.doc) {
     throw new MissingCommentError(`${method.name}`);
   }
 

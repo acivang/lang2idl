@@ -17,8 +17,14 @@ export let getPropertys = (code: string, typeFilesMap: { [key: string]: string }
   let properties: any = [];
 
   code = code.replace(/ { get; set; }/g,';');
-  let startIndex: number = code.indexOf("class");
+  let startIndex: number = 0;
   let endIndex: number = code.lastIndexOf("}");
+
+  if (code.indexOf("class ") > -1) {// the object type is class
+    startIndex = code.indexOf("class");
+  }else{
+    startIndex = code.indexOf("enum");
+  }
   let classCode = code.substring(startIndex, endIndex);//.replace(/\n/g,'');
   startIndex = classCode.indexOf("{") + 1;
   endIndex = classCode.lastIndexOf("}");
@@ -75,8 +81,8 @@ let getProperty = (propertyCode: string, code: string, isEnum?: boolean) => {
       };
     }
   } else {
-    property.name = originCode.match(/[_a-zA-Z]((\s*?.*?)*?)[a-zA-Z;\n\d]$/)[0].replace(/\n|,/g, '');
-    property.doc = getPropertyDoc(propertyCode)
+    property.name = originCode.match(/        [_a-zA-Z]((\s*?.*?)*?)[a-zA-Z;\n\d ]$/)[0].replace(/\n|,| /g, '');
+    property.doc = getPropertyDoc(propertyCode).replace(/ /g,'');
   }
 
   return property;
