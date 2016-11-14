@@ -38,7 +38,7 @@ export let getTypes = (types: any, path: string) => {
 
       let directory: string = `${path}${item.package.replace(/\./g, '/')}/`;
       fileHelper.saveFile(`${directory}${item.name.toLowerCase()}.ts`, typeCodes.join("\n"));
-      log.info(`file had created: ${path}${item.name}.ts.`);
+      log.info(`file had created: ${directory}${item.name}.ts.`);
     }
   }
 }

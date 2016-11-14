@@ -7,9 +7,9 @@
  * 
  * @memberOf utiles
  */
-export let getPackage = (code: string): string => {
+export let getNamespace = (code: string): string => {
   let name: string;
-  name = code.match(/package((\s*?.*?)*?)\n/)[0].replace(/package|\;| |\n/g, '');
+  name = code.match(/namespace((\s*?.*?)*?)\n/)[0].replace(/namespace|\;| |\n/g, '');
   return name;
 }
 
@@ -25,6 +25,6 @@ export let getPackage = (code: string): string => {
  */
 export let getObjectName = (code: string): string => {
   let name: string;
-  name = code.match(/(interface|class|enum)((\s*?.*?)*?){/)[0].replace(/(interface|class|enum)| |{/g, '');
+  name = code.match(/(interface|class|enum)((\s*?.*?)*?){/)[0].replace(/(interface|class|enum)| |{|\n/g, '');
   return name;
 }

@@ -9,13 +9,10 @@ import { getClasses } from './tools/groovy/classTool';
 import { getEnums } from './tools/groovy/enumTool';
 import { MissingMethodError, MissingCommentError, MissingPropertyError, CodeFormatError } from './utils/error';
 
-const rpcPackage: string = 'org.nofdev.rpc.';
-
 let typeFilesMap: { [key: string]: string } = {};
 
 export function convert(path: string): void {
-  let isDir: boolean = false;
-  let code: string;
+  
   let facadeFiles: string[] = [];
   let typeFiles: string[] = [];
   let fileHelper = new FileHelper();
@@ -42,14 +39,14 @@ export function convert(path: string): void {
   interfaceTools.typeFilesMap = typeFilesMap;
 
   for (let file of facadeFiles) {
-    code = fileStream.readFileSync(file).toString();
-    let itemInterface = interfaceTools.getInterface(code);
+    let interfaceCode = fileStream.readFileSync(file).toString();
+    let itemInterface = interfaceTools.getInterface(interfaceCode);
     idl.interfaces.push(itemInterface);
   }
 
   for (let file of typeFiles) {
-    code = fileStream.readFileSync(file).toString();
-    let itemType = getType(code);
+    let typeCode = fileStream.readFileSync(file).toString();
+    let itemType = getType(typeCode);
     if (itemType) {
       idl.types.push(itemType);
     }

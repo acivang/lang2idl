@@ -3,6 +3,7 @@ import { MissingMethodError, MissingCommentError, MissingPropertyError, CodeForm
 
 export class Ducoment {
 
+
   /**
    * 获取对象（interface/class/enum/method/property）的注释
    * 
@@ -14,9 +15,9 @@ export class Ducoment {
   getObjectDoc(code: string): string {
     let doc: string;
 
-    let doces = code.match(/\/\*\*((\s*?.*?)*?)\*\//);
-    
-    return doces[0].split('\n')[1].replace(/\n|\*| /g, '');
+    let doces = code.match(/<summary>((\s*?.*?)*?)<\/summary>/);
+
+    return doces[0].replace(/<summary>|<\/summary>|\/\/\/|\n| /g, '');
   }
 
   /**
@@ -30,16 +31,16 @@ export class Ducoment {
   getMethodReturnDoc(code: string): string {
     let doc: string;
 
-    let tempDoc = code.match(/\@return((\s*?.*?)*?)\n/);
+    let tempDoc = code.match(/<returns>((\s*?.*?)*?)<\/returns>/);
     if (tempDoc) {
-      doc = tempDoc[0].replace(/@return |\n/g, '');
+      doc = tempDoc[0].replace(/<returns>|<\/returns>|\n| /g, '');
     }
 
     return doc;
   }
 
   /**
-   * 获取方法参数注释
+   * 获取方法参数
    * 
    * @param {string} code
    * @returns {string}
@@ -49,10 +50,10 @@ export class Ducoment {
   getMethodArgsDoc(code: string): string[] {
     let doc: string[] = [];
     doc.pop();
-    let doces = code.match(/\@param((\s*?.*?)*?)\n/g);
+    let doces = code.match(/<param((\s*?.*?)*?)<\/param>/g);
     if (doces) {
       for (let item of doces) {
-        item = item.replace(/\n|\*| |@param/g, '');
+        item = item.replace(/<\/param>|<param name=|"|>/g, '');
         if (item && item.length !== 0) {
           doc.push(item);
         }
