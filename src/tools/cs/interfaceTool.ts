@@ -11,7 +11,7 @@ let interfaceName: string;
 let doc = new Doc();
 
 
-export class InterfaceTools {
+export class InterfaceTool {
   typeFilesMap: { [key: string]: string };
 
   getInterface = (code: string) => {

@@ -1,7 +1,10 @@
 
 import * as struct from '../../utils/struct';
+import * as dataType from '../../utils/type';
 import { packageTool } from './packageTool';
 import { MissingMethodError, MissingCommentError, CodeFormatError } from '../../utils/error';
+import { FileHelper } from '../../utils/files';
+import { log } from '../../utils/log';
 
 //groovy类型字典
 let groovyTypeMap: { [type: string]: boolean } = {
@@ -24,8 +27,9 @@ let groovyTypeMap: { [type: string]: boolean } = {
 };
 let imports: string[];
 let packagetool = new packageTool();
+let fileHelper = new FileHelper();
 
-export class typeTool {
+export class TypeTool {
   typeFilesMap: { [key: string]: string };
 
   getType = (typeCode: string): any => {
@@ -61,7 +65,100 @@ export class typeTool {
     }
   }
 
-  private getTypePackage (type: string): string {
+  getTypes = (types: any, path: string) => {
+    let imports: Array<string> = new Array();
+    let importsMap: { [key: string]: boolean } = {};
+    for (let item of types) {
+      let namespaceName: string = "";
+      if (item.package) {
+        let typeCodes: Array<string> = new Array();
+        let propertyCodes: Array<string> = new Array();
+        typeCodes.push(`package ${item.package.toLowerCase()}\n`);
+
+        if (item.type === "class") {
+          for (let property of item.properties) {
+            propertyCodes.push('\n/**')
+            propertyCodes.push(` * ${property.doc}`);
+            propertyCodes.push(' */')
+            if (property.type.indexOf('.') < 0) {
+              if (property.typeParams) {
+                let typeParams: Array<string> = new Array();
+                for (let param of property.typeParams) {
+                  if (param.indexOf(".") > -1) {
+                    namespaceName = param.substring(0, param.lastIndexOf(".")).toLowerCase();
+                    param = param.substring(param.lastIndexOf(".") + 1);
+                    if (!importsMap[namespaceName]) {
+                      importsMap[namespaceName] = true;
+                      imports.push(`import ${namespaceName}.*;`);
+                    }
+                  }
+                  typeParams.push(param);
+                }
+
+                propertyCodes.push(`${dataType.toLangType(property.type.toLowerCase(), 'groovy')}<${typeParams.join(", ")}> ${property.name};`);
+
+              } else {
+                propertyCodes.push(`${dataType.toLangType(property.type.toLowerCase(), 'groovy')} ${property.name};`);
+              }
+            } else {
+              namespaceName = property.type.substring(0, property.type.lastIndexOf("."));
+              if (!importsMap[namespaceName]) {
+                importsMap[namespaceName] = true;
+                imports.push(`import ${namespaceName};`);
+              }
+              if (property.typeParams) {
+                let typeParams: Array<string> = new Array();
+                for (let param of property.typeParams) {
+                  if (param.indexOf(".") > -1) {
+                    namespaceName = param.substring(0, param.lastIndexOf(".")).toLowerCase();
+                    param = param.substring(param.lastIndexOf(".") + 1);
+                    if (!importsMap[namespaceName]) {
+                      importsMap[namespaceName] = true;
+                      imports.push(`import ${namespaceName}.*;`);
+                    }
+                  }
+                  typeParams.push(param);
+                }
+
+                propertyCodes.push(`${dataType.toLangType(property.type.toLowerCase(), 'groovy')}<${typeParams.join(", ")}> ${property.name};`);
+
+              } else {
+                propertyCodes.push(`${property.type.substring(property.type.lastIndexOf(".") + 1)} ${property.name};`);
+              }
+            }
+          }
+        } else if (item.type === "enum") {
+          for (let property of item.properties) {
+            propertyCodes.push('\n/**')
+            propertyCodes.push(` * ${property.doc}`);
+            propertyCodes.push(' */')
+            propertyCodes.push(`${property.name},`);
+          }
+        }
+        typeCodes.push(imports.join('\n'));
+        if (item.doc) {
+          typeCodes.push('/**');
+          typeCodes.push(` * ${item.doc}`);
+          typeCodes.push(' */');
+        }
+        if (item.type === "class") {
+          typeCodes.push(`class ${item.name}{`);
+        } else if (item.type === "enum") {
+          typeCodes.push(`enum ${item.name}{`);
+        }
+        typeCodes.push(propertyCodes.join('\n'));
+        typeCodes.push("}");
+        // typeCodes.push("}");
+
+        let directory: string = `${path}${item.package.replace(/\./g, '/')}/`.toLowerCase();
+        let filePath: string = `${directory}${item.name}.groovy`;
+        fileHelper.saveFile(filePath, typeCodes.join("\n"));
+        log.info(`file had created: ${filePath}.`);
+      }
+    }
+  }
+
+  private getTypePackage(type: string): string {
     if (groovyTypeMap[type.toLowerCase()]) {
       return type;
     }

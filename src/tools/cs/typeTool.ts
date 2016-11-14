@@ -33,7 +33,7 @@ let csharpTypeMap: { [type: string]: boolean } = {
 let imports: string[];
 let namespacetool = new namespaceTool();
 
-export class typeTool {
+export class TypeTool {
   typeFilesMap: { [key: string]: string };
 
   getType = (typeCode: string): any => {

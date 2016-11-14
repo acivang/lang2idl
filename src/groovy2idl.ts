@@ -4,7 +4,7 @@ import * as dataType from './utils/type';
 import * as struct from './utils/struct';
 import { FileHelper } from './utils/files';
 import { log } from './utils/log';
-import { InterfaceTools } from './tools/groovy/interfaceTool';
+import { InterfaceTool } from './tools/groovy/interfaceTool';
 import { getClasses } from './tools/groovy/classTool';
 import { getEnums } from './tools/groovy/enumTool';
 import { MissingMethodError, MissingCommentError, MissingPropertyError, CodeFormatError } from './utils/error';
@@ -16,7 +16,7 @@ export function convert(path: string): void {
   let facadeFiles: string[] = [];
   let typeFiles: string[] = [];
   let fileHelper = new FileHelper();
-  let interfaceTools = new InterfaceTools();
+  let interfaceTool = new InterfaceTool();
 
   let idl = struct.idlStruct();
   let files: string[] = fileHelper.getAllFiles(path);
@@ -36,11 +36,11 @@ export function convert(path: string): void {
 
   }
   
-  interfaceTools.typeFilesMap = typeFilesMap;
+  interfaceTool.typeFilesMap = typeFilesMap;
 
   for (let file of facadeFiles) {
     let interfaceCode = fileStream.readFileSync(file).toString();
-    let itemInterface = interfaceTools.getInterface(interfaceCode);
+    let itemInterface = interfaceTool.getInterface(interfaceCode);
     idl.interfaces.push(itemInterface);
   }
 

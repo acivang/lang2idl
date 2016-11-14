@@ -29,7 +29,11 @@ let groovyTypeMap: { [type: string]: string } = {
   ['number']: 'int',
   ['string']: 'String',
   ['Date']: 'Date',
-  ['void']: 'def'
+  ['void']: 'void',
+  ['dictionary']: 'Map',
+  ['map']: 'Map',
+  ['array']: 'List',
+  ['list']: 'List'
 }
 
 export function toTsType(type: string): string {
@@ -47,7 +51,15 @@ export function toTsType(type: string): string {
 
 export function toLangType(type: string, lang: string): string {
   let langType = 'null';
-
+  switch(lang){
+    case 'groovy':
+      langType = groovyTypeMap[type];
+      break;
+      case 'cs':
+      langType = groovyTypeMap[type];
+      break;
+      
+  }
   return langType;
 }
 

@@ -1,14 +1,14 @@
 
 import * as utils from './utils';
 import { Ducoment as Doc } from './docTool';
-import { typeTool } from './typeTool';
+import { TypeTool } from './TypeTool';
 import { MissingPropertyError, MissingCommentError, PropertySybolError } from '../../utils/error';
 
 let fileName: string;
 let propertyName: string;
 let packageName: string;
 let doc = new Doc();
-let typetool = new typeTool();
+let typetool = new TypeTool();
 
 export let getPropertys = (code: string, typeFilesMap: { [key: string]: string }): any => {
   typetool.typeFilesMap = typeFilesMap;

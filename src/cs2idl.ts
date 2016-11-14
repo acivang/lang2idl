@@ -4,7 +4,7 @@ import * as dataType from './utils/type';
 import * as struct from './utils/struct';
 import { FileHelper } from './utils/files';
 import { log } from './utils/log';
-import { InterfaceTools } from './tools/cs/interfaceTool';
+import { InterfaceTool } from './tools/cs/interfaceTool';
 import { getClasses } from './tools/cs/classTool';
 import { getEnums } from './tools/cs/enumTool';
 
@@ -19,7 +19,7 @@ export function convert(path: string): void {
   let facadeFiles: string[] = [];
   let typeFiles: string[] = [];
   let fileHelper = new FileHelper();
-  let interfaceTools = new InterfaceTools();
+  let interfaceTools = new InterfaceTool();
   let idl = struct.idlStruct();
   let files: string[] = fileHelper.getAllFiles(path);
 

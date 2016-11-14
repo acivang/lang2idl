@@ -2,12 +2,12 @@
 import * as struct from '../../utils/struct';
 import { Ducoment as Doc } from './docTool';
 import * as utils from './utils';
-import { typeTool } from './typeTool';
+import { TypeTool } from './TypeTool';
 import { MissingMethodError, MissingCommentError, CodeFormatError } from '../../utils/error';
 
 
 let doc = new Doc();
-let typetool = new typeTool();
+let typetool = new TypeTool();
 
 export let getMethods = (code: string, typeFilesMap: { [key: string]: string }): any => {
   let methods: any = [];

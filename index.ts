@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import * as groovy2idl from './src/groovy2idl';
 import * as csharp2idl from './src/cs2idl';
 import * as idl2ts from './src/idl2ts';
+import * as idl2groovy from './src/idl2groovy';
 
 let dir: string;
 let argvs = process.argv;
@@ -37,6 +38,10 @@ switch (command) {
     break;
   case 'idl2ts':
     idl2ts.convert(dir);
+    break;
+  case 'idl2groovy':
+    idl2groovy.convert(dir);
+    break;
   default:
     break;
 }

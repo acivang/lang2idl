@@ -151,9 +151,9 @@ export let getInterfaces = (interfaces: any, path: string) => {
     interfaceCodes.push(methodCode.join(";\n\n"));
     interfaceCodes.push("}");
     // interfaceCodes.push("}");
-    path = `${path}${item.package.replace(/\./g, '/')}/`;
+    let directory: string  = `${path}${item.package.replace(/\./g, '/')}/`;
 
-    fileHelper.saveFile(`${path}${item.name.toLowerCase()}.ts`, interfaceCodes.join("\n"));
-    log.info(`file had created: ${path}${item.name}.ts.`);
+    fileHelper.saveFile(`${directory}${item.name.toLowerCase()}.ts`, interfaceCodes.join("\n"));
+    log.info(`file had created: ${directory}${item.name}.ts.`);
   }
 }
