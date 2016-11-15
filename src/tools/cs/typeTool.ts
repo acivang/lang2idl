@@ -1,7 +1,10 @@
 
 import * as struct from '../../utils/struct';
+import * as dataType from '../../utils/type';
 import { namespaceTool } from './namespaceTool';
 import { MissingMethodError, MissingCommentError, CodeFormatError, MissingFileError } from '../../utils/error';
+import { FileHelper } from '../../utils/files';
+import { log } from '../../utils/log';
 
 //groovy类型字典
 let csharpTypeMap: { [type: string]: boolean } = {
@@ -30,8 +33,9 @@ let csharpTypeMap: { [type: string]: boolean } = {
   ['ulong']: true,
   ['ushort']: true
 };
-let imports: string[];
+let usings: string[];
 let namespacetool = new namespaceTool();
+let fileHelper = new FileHelper();
 
 export class TypeTool {
   typeFilesMap: { [key: string]: string };
@@ -66,6 +70,99 @@ export class TypeTool {
     }
     return {
       type: propType
+    }
+  }
+
+  getTypes = (types: any, path: string) => {
+    let usings: Array<string> = new Array();
+    let usingsMap: { [key: string]: boolean } = {};
+    for (let item of types) {
+      let namespaceName: string = "";
+      if (item.package) {
+        let typeCodes: Array<string> = new Array();
+        let propertyCodes: Array<string> = new Array();
+
+        if (item.type === "class") {
+          for (let property of item.properties) {
+            propertyCodes.push('\n/// <summary>')
+            propertyCodes.push(` /// ${property.doc}`);
+            propertyCodes.push(' /// <summary>')
+            if (property.type.indexOf('.') < 0) {
+              if (property.typeParams) {
+                let typeParams: Array<string> = new Array();
+                for (let param of property.typeParams) {
+                  if (param.indexOf(".") > -1) {
+                    namespaceName = param.substring(0, param.lastIndexOf(".")).toLowerCase();
+                    param = param.substring(param.lastIndexOf(".") + 1);
+                    if (!usingsMap[namespaceName]) {
+                      usingsMap[namespaceName] = true;
+                      usings.push(`using ${namespaceName};`);
+                    }
+                  }
+                  typeParams.push(param);
+                }
+
+                propertyCodes.push(`public ${dataType.toLangType(property.type.toLowerCase(), 'cs')}<${typeParams.join(", ")}> ${property.name} { get; set; }`);
+
+              } else {
+                propertyCodes.push(`public ${dataType.toLangType(property.type.toLowerCase(), 'cs')} ${property.name} { get; set; }`);
+              }
+            } else {
+              namespaceName = property.type.substring(0, property.type.lastIndexOf("."));
+              if (!usingsMap[namespaceName]) {
+                usingsMap[namespaceName] = true;
+                usings.push(`using ${namespaceName};`);
+              }
+              if (property.typeParams) {
+                let typeParams: Array<string> = new Array();
+                for (let param of property.typeParams) {
+                  if (param.indexOf(".") > -1) {
+                    namespaceName = param.substring(0, param.lastIndexOf(".")).toLowerCase();
+                    param = param.substring(param.lastIndexOf(".") + 1);
+                    if (!usingsMap[namespaceName]) {
+                      usingsMap[namespaceName] = true;
+                      usings.push(`using ${namespaceName};`);
+                    }
+                  }
+                  typeParams.push(param);
+                }
+
+                propertyCodes.push(`public ${dataType.toLangType(property.type.toLowerCase(), 'cs')}<${typeParams.join(", ")}> ${property.name} { get; set; }`);
+
+              } else {
+                propertyCodes.push(`public ${property.type.substring(property.type.lastIndexOf(".") + 1)} ${property.name} { get; set; }`);
+              }
+            }
+          }
+        } else if (item.type === "enum") {
+          for (let property of item.properties) {
+            propertyCodes.push('\n/// <summary>')
+            propertyCodes.push(`/// ${property.doc}`);
+            propertyCodes.push('///')
+            propertyCodes.push(`${property.name},`);
+          }
+        }
+        typeCodes.push(usings.join('\n'));
+        typeCodes.push(`namespace ${item.package.toLowerCase()} {\n`);
+        if (item.doc) {
+          typeCodes.push('/// <summary>');
+          typeCodes.push(`/// ${item.doc}`);
+          typeCodes.push('/// </summary>');
+        }
+        if (item.type === "class") {
+          typeCodes.push(`class ${item.name}{`);
+        } else if (item.type === "enum") {
+          typeCodes.push(`enum ${item.name}{`);
+        }
+        typeCodes.push(propertyCodes.join('\n'));
+        typeCodes.push("}");
+        typeCodes.push("}");
+
+        let directory: string = `${path}${item.package.replace(/\./g, '/')}/`.toLowerCase();
+        let filePath: string = `${directory}${item.name}.cs`;
+        fileHelper.saveFile(filePath, typeCodes.join("\n"));
+        log.info(`file had created: ${filePath}.`);
+      }
     }
   }
 

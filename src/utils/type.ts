@@ -25,7 +25,7 @@ let tsTypeMap: { [type: string]: string } = {
 
 //将其他语言类型转换为groovy类型的字典
 let groovyTypeMap: { [type: string]: string } = {
-  ['decimal']: 'double',
+  ['decimal']: 'float',
   ['number']: 'int',
   ['string']: 'String',
   ['Date']: 'Date',
@@ -33,8 +33,40 @@ let groovyTypeMap: { [type: string]: string } = {
   ['dictionary']: 'Map',
   ['map']: 'Map',
   ['array']: 'List',
-  ['list']: 'List'
+  ['list']: 'List',
+  ['boolean']: 'Boolean',
+  ['int32']: 'int',
+  ['int64']: 'long',
+  ['integer']: 'int',
+  ['biginteger']: 'long',
+  ['bigdecimal']: 'double',
+  ['byte']: 'byte',
+  ['short']: 'short',
+  ['long']: 'long'
 }
+
+let csTypeMap: { [type: string]: string } = {
+  ['decimal']: 'double',
+  ['number']: 'int',
+  ['string']: 'string',
+  ['Date']: 'Date',
+  ['void']: 'void',
+  ['dictionary']: 'Dictionary',
+  ['map']: 'Dictionary',
+  ['array']: 'List',
+  ['list']: 'List',
+  ['boolean']: 'bool',
+  ['int32']: 'int',
+  ['int64']: 'long',
+  ['integer']: 'int',
+  ['biginteger']: 'long',
+  ['bigdecimal']: 'double',
+  ['byte']: 'byte',
+  ['short']: 'short',
+  ['long']: 'long'
+}
+
+
 
 export function toTsType(type: string): string {
   let idlType = 'undefined';
@@ -56,7 +88,7 @@ export function toLangType(type: string, lang: string): string {
       langType = groovyTypeMap[type];
       break;
       case 'cs':
-      langType = groovyTypeMap[type];
+      langType = csTypeMap[type];
       break;
       
   }

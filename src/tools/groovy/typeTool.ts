@@ -66,10 +66,10 @@ export class TypeTool {
   }
 
   getTypes = (types: any, path: string) => {
-    let imports: Array<string> = new Array();
-    let importsMap: { [key: string]: boolean } = {};
     for (let item of types) {
       let namespaceName: string = "";
+      let imports: Array<string> = new Array();
+      let importsMap: { [key: string]: boolean } = {};
       if (item.package) {
         let typeCodes: Array<string> = new Array();
         let propertyCodes: Array<string> = new Array();

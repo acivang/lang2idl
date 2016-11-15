@@ -54,7 +54,7 @@ export class InterfaceTool {
           if (!arg.name) {
             break;
           }
-          doc.push(` * ${arg.doc}`);
+          doc.push(` * @param ${arg.doc}`);
           if (arg.type.indexOf('.') < 0) {
             args.push(`${dataType.toLangType(arg.type, 'groovy')} ${arg.name}`);
           } else {
@@ -65,6 +65,9 @@ export class InterfaceTool {
             }
             args.push(` ${arg.type.substring(arg.type.lastIndexOf(".") + 1)} ${arg.name}`);
           }
+        }
+        if (method.return.doc) {
+          doc.push(` * @return ${method.return.doc}`);
         }
         doc.push(` */`);
 
@@ -79,8 +82,7 @@ export class InterfaceTool {
           }
           let typeParams: Array<string> = new Array();
           if (method.return.typeParams) {
-            for (let m: number = 0; m < method.return.typeParams.length; m++) {
-              let typeParam: any = method.return.typeParams[m];
+            for (let typeParam of method.return.typeParams) {
               if (typeParam.indexOf(".") > -1) {
                 namespaceName = typeParam.substring(0, typeParam.lastIndexOf(".")).toLowerCase();
                 typeParam = typeParam.substring(typeParam.lastIndexOf(".") + 1);
