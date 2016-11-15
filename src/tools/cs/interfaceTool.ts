@@ -45,6 +45,8 @@ export class InterfaceTool {
       let methods: Array<string> = new Array();
       let interfaceCodes: Array<string> = new Array();
 
+      usings.push('using System;');
+
       let methodCode: Array<string> = new Array();
       for (let method of item.methods) {
         let doc: Array<string> = new Array();
@@ -57,7 +59,7 @@ export class InterfaceTool {
           if (!arg.name) {
             break;
           }
-          doc.push(`/// <param name='${arg.name}'>${arg.doc.replace(arg.name,'')}</param>`);
+          doc.push(`/// <param name='${arg.name}'>${arg.doc.replace(arg.name, '')}</param>`);
           if (arg.type.indexOf('.') < 0) {
             args.push(`${dataType.toLangType(arg.type, 'cs')} ${arg.name}`);
           } else {
@@ -84,6 +86,9 @@ export class InterfaceTool {
           }
           let typeParams: Array<string> = new Array();
           if (method.return.typeParams) {
+            if (method.return.type.toLowerCase() === 'list' || method.return.type.toLowerCase() === 'dictionary') {
+              usings.push('System.Collections.Generic');
+            }
             for (let typeParam of method.return.typeParams) {
               if (typeParam.indexOf(".") > -1) {
                 namespaceName = typeParam.substring(0, typeParam.lastIndexOf(".")).toLowerCase();

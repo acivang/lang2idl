@@ -1,7 +1,7 @@
 import * as fileStream from 'fs';
 import { MissingFileError, CodeFormatError } from './utils/error';
 import { InterfaceTool } from './tools/cs/interfaceTool';
-import { TypeTool } from './tools/cs/TypeTool';
+import { TypeTool } from './tools/cs/typeTool';
 
 export function convert(path: string): void {
 

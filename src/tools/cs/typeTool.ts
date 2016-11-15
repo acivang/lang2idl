@@ -74,21 +74,28 @@ export class TypeTool {
   }
 
   getTypes = (types: any, path: string) => {
-    let usings: Array<string> = new Array();
-    let usingsMap: { [key: string]: boolean } = {};
+
+    usings.push('using System;');
+
     for (let item of types) {
       let namespaceName: string = "";
+      let usings: Array<string> = new Array();
+      let usingsMap: { [key: string]: boolean } = {};
       if (item.package) {
         let typeCodes: Array<string> = new Array();
         let propertyCodes: Array<string> = new Array();
 
         if (item.type === "class") {
           for (let property of item.properties) {
+            property.type = property.type.toLowerCase();
             propertyCodes.push('\n/// <summary>')
             propertyCodes.push(` /// ${property.doc}`);
             propertyCodes.push(' /// <summary>')
             if (property.type.indexOf('.') < 0) {
               if (property.typeParams) {
+                if (property.type === 'list' || property.type === 'dictionary') {
+                  usings.push('using System.Collections.Generic');
+                }
                 let typeParams: Array<string> = new Array();
                 for (let param of property.typeParams) {
                   if (param.indexOf(".") > -1) {
@@ -102,10 +109,10 @@ export class TypeTool {
                   typeParams.push(param);
                 }
 
-                propertyCodes.push(`public ${dataType.toLangType(property.type.toLowerCase(), 'cs')}<${typeParams.join(", ")}> ${property.name} { get; set; }`);
+                propertyCodes.push(`public ${dataType.toLangType(property.type, 'cs')}<${typeParams.join(", ")}> ${property.name} { get; set; }`);
 
               } else {
-                propertyCodes.push(`public ${dataType.toLangType(property.type.toLowerCase(), 'cs')} ${property.name} { get; set; }`);
+                propertyCodes.push(`public ${dataType.toLangType(property.type, 'cs')} ${property.name} { get; set; }`);
               }
             } else {
               namespaceName = property.type.substring(0, property.type.lastIndexOf("."));
@@ -127,7 +134,7 @@ export class TypeTool {
                   typeParams.push(param);
                 }
 
-                propertyCodes.push(`public ${dataType.toLangType(property.type.toLowerCase(), 'cs')}<${typeParams.join(", ")}> ${property.name} { get; set; }`);
+                propertyCodes.push(`public ${dataType.toLangType(property.type, 'cs')}<${typeParams.join(", ")}> ${property.name} { get; set; }`);
 
               } else {
                 propertyCodes.push(`public ${property.type.substring(property.type.lastIndexOf(".") + 1)} ${property.name} { get; set; }`);
@@ -166,12 +173,12 @@ export class TypeTool {
     }
   }
 
-  private getTypePackage (type: string): string {
+  private getTypePackage(type: string): string {
     if (csharpTypeMap[type.toLowerCase()]) {
       return type;
     }
-    if(!this.typeFilesMap[type.toLowerCase()]){
-      throw new MissingFileError(`${ type }.cs`);
+    if (!this.typeFilesMap[type.toLowerCase()]) {
+      throw new MissingFileError(`${type}.cs`);
     }
     return namespacetool.getNamespaceParam(type, this.typeFilesMap[type.toLowerCase()]);
   }
