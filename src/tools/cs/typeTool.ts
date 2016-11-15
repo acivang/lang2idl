@@ -75,12 +75,13 @@ export class TypeTool {
 
   getTypes = (types: any, path: string) => {
 
-    usings.push('using System;');
-
     for (let item of types) {
       let namespaceName: string = "";
       let usings: Array<string> = new Array();
       let usingsMap: { [key: string]: boolean } = {};
+
+      usings.push('using System;');
+
       if (item.package) {
         let typeCodes: Array<string> = new Array();
         let propertyCodes: Array<string> = new Array();
