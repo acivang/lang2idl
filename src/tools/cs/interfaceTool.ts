@@ -46,6 +46,7 @@ export class InterfaceTool {
       let interfaceCodes: Array<string> = new Array();
 
       usings.push('using System;');
+      usingsMap[`${item.package}`] = true;
 
       let methodCode: Array<string> = new Array();
       for (let method of item.methods) {
@@ -87,7 +88,7 @@ export class InterfaceTool {
           let typeParams: Array<string> = new Array();
           if (method.return.typeParams) {
             if (method.return.type.toLowerCase() === 'list' || method.return.type.toLowerCase() === 'dictionary') {
-              usings.push('System.Collections.Generic');
+              usings.push('System.Collections.Generic;');
             }
             for (let typeParam of method.return.typeParams) {
               if (typeParam.indexOf(".") > -1) {
@@ -110,7 +111,7 @@ export class InterfaceTool {
         methodCode.push(`${doc.join('\n')}\n${methodLine}`)
       }
       interfaceCodes.push(usings.join("\n"));
-      interfaceCodes.push(`namespace ${item.package.toLowerCase()} {`);
+      interfaceCodes.push(`\nnamespace ${item.package.toLowerCase()} {`);
       if (item.doc) {
         interfaceCodes.push('/// <summary>')
         interfaceCodes.push(`/// ${item.doc}`);

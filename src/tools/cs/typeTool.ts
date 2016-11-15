@@ -81,6 +81,7 @@ export class TypeTool {
       let usingsMap: { [key: string]: boolean } = {};
 
       usings.push('using System;');
+      usingsMap[`${item.package}`] = true;
 
       if (item.package) {
         let typeCodes: Array<string> = new Array();
@@ -95,7 +96,7 @@ export class TypeTool {
             if (property.type.indexOf('.') < 0) {
               if (property.typeParams) {
                 if (property.type === 'list' || property.type === 'dictionary') {
-                  usings.push('using System.Collections.Generic');
+                  usings.push('using System.Collections.Generic;');
                 }
                 let typeParams: Array<string> = new Array();
                 for (let param of property.typeParams) {
@@ -151,7 +152,7 @@ export class TypeTool {
           }
         }
         typeCodes.push(usings.join('\n'));
-        typeCodes.push(`namespace ${item.package.toLowerCase()} {\n`);
+        typeCodes.push(`\nnamespace ${item.package.toLowerCase()} {\n`);
         if (item.doc) {
           typeCodes.push('/// <summary>');
           typeCodes.push(`/// ${item.doc}`);
