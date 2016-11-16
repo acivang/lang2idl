@@ -1,4 +1,4 @@
-
+import * as osPath from 'path';
 import * as fileStream from 'fs';
 import * as dataType from '../../utils/type';
 import { log } from '../../utils/log';
@@ -151,7 +151,7 @@ export let getInterfaces = (interfaces: any, path: string) => {
     interfaceCodes.push(methodCode.join(";\n\n"));
     interfaceCodes.push("}");
     // interfaceCodes.push("}");
-    let directory: string  = `${path}${item.package.replace(/\./g, '/')}/`;
+    let directory: string  = `${path}${item.package.replace(/\./g, osPath.sep)}/`;
 
     fileHelper.saveFile(`${directory}${item.name.toLowerCase()}.ts`, interfaceCodes.join("\n"));
     log.info(`file had created: ${directory}${item.name}.ts.`);

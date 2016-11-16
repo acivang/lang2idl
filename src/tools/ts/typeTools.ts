@@ -1,4 +1,4 @@
-
+import * as osPath from 'path';
 import * as fileStream from 'fs';
 import * as dataType from '../../utils/type';
 import { log } from '../../utils/log';
@@ -36,7 +36,7 @@ export let getTypes = (types: any, path: string) => {
       typeCodes.push("}");
       // typeCodes.push("}");
 
-      let directory: string = `${path}${item.package.replace(/\./g, '/')}/`;
+      let directory: string = `${path}${item.package.replace(/\./g, osPath)}/`;
       fileHelper.saveFile(`${directory}${item.name.toLowerCase()}.ts`, typeCodes.join("\n"));
       log.info(`file had created: ${directory}${item.name}.ts.`);
     }

@@ -1,4 +1,4 @@
-
+import * as osPath from 'path';
 import * as struct from '../../utils/struct';
 import * as dataType from '../../utils/type';
 import { namespaceTool } from './namespaceTool';
@@ -167,7 +167,7 @@ export class TypeTool {
         typeCodes.push("}");
         typeCodes.push("}");
 
-        let directory: string = `${path}${item.package.replace(/\./g, '/')}/`.toLowerCase();
+        let directory: string = `${path}${item.package.replace(/\./g, osPath.sep)}/`.toLowerCase();
         let filePath: string = `${directory}${item.name}.cs`;
         fileHelper.saveFile(filePath, typeCodes.join("\n"));
         log.info(`file had created: ${filePath}.`);
