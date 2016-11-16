@@ -1,4 +1,5 @@
 
+import * as osPath from 'path';
 import * as struct from '../../utils/struct';
 import * as utils from './utils';
 import * as dataType from '../../utils/type';
@@ -121,7 +122,7 @@ export class InterfaceTool {
       interfaceCodes.push(methodCode.join(";\n\n"));
       interfaceCodes.push(" }");
       interfaceCodes.push("}");
-      let directory: string = `${path}${item.package.replace(/\./g, '/')}/`.toLowerCase();
+      let directory: string = `${path}${item.package.replace(/\./g, osPath.sep)}/`.toLowerCase();
       //TODO: 根据package输出到对应目录
       fileHelper.saveFile(`${directory}${item.name}.cs`, interfaceCodes.join("\n"));
       log.info(`${item.name}.groovy had created at ${directory}.`);

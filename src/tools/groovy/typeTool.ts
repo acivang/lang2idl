@@ -1,4 +1,4 @@
-
+import * as osPath from 'path';
 import * as struct from '../../utils/struct';
 import * as dataType from '../../utils/type';
 import { packageTool } from './packageTool';
@@ -150,7 +150,7 @@ export class TypeTool {
         typeCodes.push("}");
         // typeCodes.push("}");
 
-        let directory: string = `${path}${item.package.replace(/\./g, '/')}/`.toLowerCase();
+        let directory: string = `${path}${item.package.replace(/\./g, osPath)}/`.toLowerCase();
         let filePath: string = `${directory}${item.name}.groovy`;
         fileHelper.saveFile(filePath, typeCodes.join("\n"));
         log.info(`file had created: ${filePath}.`);

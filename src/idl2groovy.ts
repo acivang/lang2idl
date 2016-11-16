@@ -1,15 +1,16 @@
 import * as fileStream from 'fs';
+import * as path from 'path';
 import { MissingFileError, CodeFormatError } from './utils/error';
 import { InterfaceTool } from './tools/groovy/interfaceTool';
 import { TypeTool } from './tools/groovy/TypeTool';
 
-export function convert(path: string): void {
+export function convert(filePath: string): void {
 
-  if (!fileStream.existsSync(path)) {
+  if (!fileStream.existsSync(filePath)) {
     throw new MissingFileError(`'${path}'`);
   }
 
-  let code: any = fileStream.readFileSync(path).toString();
+  let code: any = fileStream.readFileSync(filePath).toString();
   if (!code) {
     throw new CodeFormatError(`'${path}'`);
   }
@@ -25,7 +26,7 @@ export function convert(path: string): void {
   let interfaces: any = code.interfaces;
   let types: any = code.types;
 
-  path = path.substring(0, path.lastIndexOf('/') + 1);
-  interfaceTool.getInterfaces(interfaces, path);
-  typeTool.getTypes(types, path);
+  filePath = filePath.substring(0, filePath.lastIndexOf(path.sep) + 1);
+  interfaceTool.getInterfaces(interfaces, filePath);
+  typeTool.getTypes(types, filePath);
 }
