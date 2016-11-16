@@ -1,5 +1,5 @@
 import * as fileStream from 'fs';
-
+import * as osPath from 'path';
 import * as dataType from './utils/type';
 import * as struct from './utils/struct';
 import { FileHelper } from './utils/files';
@@ -24,17 +24,18 @@ export function convert(path: string): void {
   let files: string[] = fileHelper.getAllFiles(path);
 
   for (let file of files) {
-    if (file.lastIndexOf('.cs') < 0) {
+    if (osPath.extname(file) !== '.cs') {
       continue;
     }
-    if (file.toLowerCase().lastIndexOf('facade.cs') > -1) {
+
+    let fileName: string = osPath.basename(file, '.cs').toLowerCase();
+    if (fileName.indexOf('facade') > -1) {
       facadeFiles.push(file);
 
-    } else if (file.toLowerCase().lastIndexOf('.cs') > -1) {
+    } else {
 
       typeFiles.push(file);
-      let key: string = file.substring(file.lastIndexOf('/') + 1, file.indexOf('.')).toLowerCase();
-      typeFilesMap[key] = file;
+      typeFilesMap[fileName] = file;
 
     }
 
@@ -44,7 +45,9 @@ export function convert(path: string): void {
   for (let file of typeFiles) {
     let typeCode = fileStream.readFileSync(file).toString();
     let itemType = getType(typeCode);
-    idl.types.push(itemType);
+    if (!itemType) {
+      idl.types.push(itemType);
+    }
   }
 
   for (let file of facadeFiles) {

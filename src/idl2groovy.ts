@@ -26,7 +26,7 @@ export function convert(filePath: string): void {
   let interfaces: any = code.interfaces;
   let types: any = code.types;
 
-  filePath = filePath.substring(0, filePath.lastIndexOf(path.sep) + 1);
-  interfaceTool.getInterfaces(interfaces, filePath);
-  typeTool.getTypes(types, filePath);
+  let dirname = path.dirname(filePath);
+  interfaceTool.getInterfaces(interfaces, dirname);
+  typeTool.getTypes(types, dirname);
 }
