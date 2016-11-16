@@ -17,6 +17,8 @@ export let getMetaes = (code: string, endValue: string) => {
       });
     }
   }
-
+  if(metaes.length === 0){
+    metaes.push({});
+  }
   return metaes;
 }
