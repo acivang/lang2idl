@@ -111,10 +111,9 @@ export class InterfaceTool {
       interfaceCodes.push(`interface ${item.name}{`);
       interfaceCodes.push(methodCode.join(";\n\n"));
       interfaceCodes.push("}");
-      let directory: string = `${path}${item.package.replace(/\./g, osPath.sep)}/`.toLowerCase();
-      //TODO: 根据package输出到对应目录
-      fileHelper.saveFile(`${directory}${item.name}.groovy`, interfaceCodes.join("\n"));
-      log.info(`${item.name}.groovy had created at ${directory}.`);
+      let filePath: string = `${osPath.join(path, item.package.replace(/\./g, osPath.sep).toLowerCase(), item.name)}.groovy`;
+      fileHelper.saveFile(filePath, interfaceCodes.join("\n"));
+      log.info(`file had created: ${filePath}.`);
     }
   }
 }

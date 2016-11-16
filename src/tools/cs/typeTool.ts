@@ -91,8 +91,8 @@ export class TypeTool {
           for (let property of item.properties) {
             property.type = property.type.toLowerCase();
             propertyCodes.push('\n/// <summary>')
-            propertyCodes.push(` /// ${property.doc}`);
-            propertyCodes.push(' /// <summary>')
+            propertyCodes.push(`/// ${property.doc}`);
+            propertyCodes.push('/// <summary>')
             if (property.type.indexOf('.') < 0) {
               if (property.typeParams) {
                 if (property.type === 'list' || property.type === 'dictionary') {
@@ -167,8 +167,7 @@ export class TypeTool {
         typeCodes.push("}");
         typeCodes.push("}");
 
-        let directory: string = `${path}${item.package.replace(/\./g, osPath.sep)}/`.toLowerCase();
-        let filePath: string = `${directory}${item.name}.cs`;
+        let filePath: string = `${ osPath.join(path, item.package.replace(/\./g, osPath.sep).toLowerCase(), item.name) }.cs`;
         fileHelper.saveFile(filePath, typeCodes.join("\n"));
         log.info(`file had created: ${filePath}.`);
       }

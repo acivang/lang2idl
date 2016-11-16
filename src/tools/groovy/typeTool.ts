@@ -150,8 +150,7 @@ export class TypeTool {
         typeCodes.push("}");
         // typeCodes.push("}");
 
-        let directory: string = `${path}${item.package.replace(/\./g, osPath.sep)}/`.toLowerCase();
-        let filePath: string = `${directory}${item.name}.groovy`;
+        let filePath: string = `${ osPath.join(path, item.package.replace(/\./g, osPath.sep).toLowerCase(), item.name) }.groovy`;
         fileHelper.saveFile(filePath, typeCodes.join("\n"));
         log.info(`file had created: ${filePath}.`);
       }

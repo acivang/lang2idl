@@ -10,9 +10,9 @@ export let getMetaes = (code: string, endValue: string) => {
     metaBlocks = metaBlocks.match(/@((\s*?.*?)*?)\n/g);
 
     metaes.pop();
-    for (let i in metaBlocks) {
+    for (let meta of metaBlocks) {
       metaes.push({
-        type: metaes[i].replace(/\n|@/g, ''),
+        type: meta.replace(/\n|@/g, ''),
         args: {}
       });
     }
