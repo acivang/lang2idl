@@ -45,7 +45,7 @@ export function convert(path: string): void {
   for (let file of typeFiles) {
     let typeCode = fileStream.readFileSync(file).toString();
     let itemType = getType(typeCode);
-    if (!itemType) {
+    if (itemType) {
       idl.types.push(itemType);
     }
   }
