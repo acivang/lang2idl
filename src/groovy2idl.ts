@@ -12,7 +12,7 @@ import { MissingMethodError, MissingCommentError, MissingPropertyError, CodeForm
 let typeFilesMap: { [key: string]: string } = {};
 
 export function convert(path: string): void {
-  
+
   let facadeFiles: string[] = [];
   let typeFiles: string[] = [];
   let fileHelper = new FileHelper();
@@ -35,7 +35,7 @@ export function convert(path: string): void {
     }
 
   }
-  
+
   interfaceTool.typeFilesMap = typeFilesMap;
 
   for (let file of facadeFiles) {
@@ -56,12 +56,14 @@ export function convert(path: string): void {
     idl.types.push({});
   }
   let jsonIdl: any = JSON.stringify(idl);
-  fileStream.writeFile(path + `idl.json`, jsonIdl);
-  log.info(`idl json file had created: ${path}idl.json`);
+  fileStream.writeFile(path + `idl.json`, jsonIdl, () => {
+    log.info(`idl json file had created: ${path}idl.json`);
+  });
 
   jsonIdl = `export let jsonIdl = ${jsonIdl}`;
-  fileStream.writeFile(path + `idl.ts`, jsonIdl);
-  log.info(`idl ts file had created: ${path}idl.ts`);
+  fileStream.writeFile(path + `idl.ts`, jsonIdl, () => {
+    log.info(`idl ts file had created: ${path}idl.ts`);
+  });
 }
 
 

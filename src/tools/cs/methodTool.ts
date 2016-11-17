@@ -30,14 +30,12 @@ export let getMethods = (code: string, typeFilesMap: { [key: string]: string }):
       methods.push(method);
     }
   }
-
   return methods;
 }
 
 let getMethod = (methodCode: string) => {
 
   let method = struct.methodStruct();
-  //TODO: this is exception
   let methodName = methodCode.match(/        [a-zA-Z](w?.)*\(/);
   if (!methodName) {
     throw new CodeFormatError(`${methodCode}`);

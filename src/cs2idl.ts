@@ -61,13 +61,15 @@ export function convert(path: string): void {
   }
 
   let jsonIdl: any = JSON.stringify(idl);
-  fileStream.writeFile(path + `idl.json`, jsonIdl);
-  log.info(`idl json file had created: ${path}idl.json`);
+  fileStream.writeFile(path + `idl.json`, jsonIdl, () => {
+    log.info(`idl json file had created: ${path}idl.json`);
+  });
 
   jsonIdl = `export let jsonIdl = ${jsonIdl}`;
 
-  fileStream.writeFile(path + `idl.ts`, jsonIdl);
-  log.info(`idl ts file had created: ${path}idl.ts`);
+  fileStream.writeFile(path + `idl.ts`, jsonIdl, () => {
+    log.info(`idl ts file had created: ${path}idl.ts`);
+  });
 }
 
 function getType(code: string): any {
