@@ -29,7 +29,7 @@ export class InterfaceTool {
 
     itemInterface.doc = doc.getObjectDoc(code);
 
-    itemInterface.meta = getMetaes(code, 'public');
+    itemInterface.meta = getMetaes(code, 'public', this.typeFilesMap);
 
     itemInterface.methods = getMethods(code, this.typeFilesMap);
 

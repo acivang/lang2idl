@@ -11,7 +11,7 @@ export class log {
    * @memberOf log
    */
   public static info(value: string){
-    console.log('\x1b[32m', value, '\x1b[0m');  
+    console.log('\x1b[32m', `info: ${value}`, '\x1b[0m');  
   }
 
   /**
@@ -23,7 +23,7 @@ export class log {
    * @memberOf log
    */
   public static error(value: string){
-    console.log('\x1b[31m', value, '\x1b[0m');  
+    console.log('\x1b[31m', `error: ${value}`, '\x1b[0m');  
   }
 
   /**
@@ -34,9 +34,22 @@ export class log {
    * 
    * @memberOf log
    */
-  public static debug(value: string){
-    console.log('\x1b[33m', value, '\x1b[0m');  
+  public static warning(value: string){
+    console.log('\x1b[35m', `waring: ${value}`, '\x1b[0m');  
   }
+
+  /**
+   * Out put blue log text.
+   * 
+   * @static
+   * @param {string} value
+   * 
+   * @memberOf log
+   */
+  public static debug(value: string){
+    console.log('\x1b[34m', `debug: ${value}`, '\x1b[0m');  
+  }
+
 
   /**
    * 
@@ -49,7 +62,7 @@ export class log {
    * @memberOf log
    */
   private static print(value: string, color: LogColor){
-    console.log(`\x1b[${color}m`, value, '\x1b[0m');  
+    console.log(`\x1b[${color}m`, `log: ${value}`, '\x1b[0m');  
   }
 }
 
