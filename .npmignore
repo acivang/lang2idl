@@ -28,4 +28,9 @@ Desktop.ini
 **/.DS_Store
 
 # FILES
-dist/test
+test/*
+src/*
+typings/*
+index.ts
+tsconfig.json
+typings.json

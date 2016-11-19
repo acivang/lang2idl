@@ -1,18 +1,26 @@
 import * as fileStream from 'fs';
 import * as osPath from 'path';
+
+import { MissingFileError, RecursionMaxError } from './error';
+
 export class FileHelper {
 
   private _files: string[] = [];
+  private _counter: number = 0;
 
   public getAllFiles(path: string): string[] {
-
+    this._counter++;
+    if (this._counter > 10) {
+      throw new RecursionMaxError(`${this._counter}`);
+    }
     if (!fileStream.existsSync(path)) {
-      throw new Error(`no such file or directory: '${path}'`);
+      throw new MissingFileError(`'${path}'`);
     }
 
     let extname: string;
     if (fileStream.lstatSync(path).isDirectory()) {
-      for (let file of fileStream.readdirSync(path)) {
+      let files: string[] = fileStream.readdirSync(path);
+      for (let file of files) {
         extname = osPath.extname(file)
         let fullPath = osPath.join(path, file);
         if (fileStream.lstatSync(fullPath).isDirectory()) {

@@ -58,10 +58,20 @@ export class MissingFileError extends Error {
 
   constructor(public msg?: string) {
     super(msg);
-    this.message = `Missing file: ${msg}`;
+    this.message = `Missing file or fold: ${msg}`;
     this.name = "MissingFileError";
   }
   
+}
+
+export class RecursionMaxError extends Error {
+  public message: string;
+
+  constructor(public msg?: string) {
+    super(msg);
+    this.message = `There are too more subfolder: ${msg}`;
+    this.name = "MissingFileError";
+  }
 }
 
 

@@ -61,13 +61,15 @@ export function convert(path: string): void {
   }
 
   let jsonIdl: any = JSON.stringify(idl);
-  fileStream.writeFile(path + `idl.json`, jsonIdl, () => {
+  let filePath: string = osPath.join(path, 'idl.json');
+  fileStream.writeFile(filePath, jsonIdl, () => {
     log.info(`idl json file had created: ${path}idl.json`);
   });
 
   jsonIdl = `export let jsonIdl = ${jsonIdl}`;
 
-  fileStream.writeFile(path + `idl.ts`, jsonIdl, () => {
+  filePath = osPath.join(path, 'idl.ts');
+  fileStream.writeFile(filePath, jsonIdl, () => {
     log.info(`idl ts file had created: ${path}idl.ts`);
   });
 }
