@@ -1,14 +1,59 @@
 1. ### What is it?
 
-      this is a tool for create a json idl(interface description lanauge) from groovy/java/c# etc, and convert idl to typescript/java/groovy/c# etc.
+            this is a tool for create a json idl(interface description lanauge) from groovy/java/c# etc, and convert idl to typescript/java/groovy/c# etc.
 
 2. ### How use?
 
-      create json idl from groovy: npm run groovy2idl "groovy file dir path" 
+      1. #### install
 
-      create json idl from c#: npm run cs2idl "cs file dir path"
+            ```bash
 
-      create typescript from json idl: npm run idl2ts "json idl file path"
+                  npm install -g lang2idl
+
+            ```
+
+      2. #### use
+
+            create json idl from groovy: 
+
+            ```bash
+
+                  groovy2idl "groovy files or dir path" // the files path is not must if current folder had groovy files.
+
+            ```
+
+            create json idl from c#: 
+
+            ```bash
+
+                  cs2idl "cs files or dir path" // the files path is not must if current folder had cs files.
+
+            ```
+
+            create typescript from json idl: 
+
+            ```bash
+
+                  idl2ts "json idl file path" // the json idl file path is must.
+
+            ```
+
+            create groovy from json idl: 
+
+            ```bash
+
+                  idl2groovy "json idl file path" // the json idl file path is must.
+
+            ```
+
+            create cs from json idl: 
+
+            ```bash
+
+                  idl2cs "json idl file path" // the json idl file path is must.
+
+            ```
+
 
 
 3. ### About code document
@@ -18,11 +63,11 @@
       ```java
 
         /**
-        * 银泰网换绑手机号（没有关联银泰护照的账号，可以正常绑定手机号和修改绑定的手机号）
-        * @description 1.判断手机号是否已绑定银泰网账号，如果已绑定，不能换绑
-        * @description 2.判断手机号是否是银泰护照
-        * @description   2.1. 如果是银泰护照，验证银泰护照手机号+验证码登录的逻辑，换绑银泰网手机号、绑定银泰护照
-        * @description   2.2. 如果不是银泰护照，验证银泰网换绑手机号的短信验证，走银泰网换绑手机号的逻辑
+        * 换绑手机号（没有关联护照的账号，可以正常绑定手机号和修改绑定的手机号）
+        * @description 1.判断手机号是否已绑定网账号，如果已绑定，不能换绑
+        * @description 2.判断手机号是否是护照
+        * @description   2.1. 如果是护照，验证护照手机号+验证码登录的逻辑，换绑网手机号、绑定护照
+        * @description   2.2. 如果不是护照，验证网换绑手机号的短信验证，走网换绑手机号的逻辑
         * @author MengQiang
         * @param mobile 换绑后的手机号
         * @param smsVerificationCode 短信验证码
