@@ -6,7 +6,7 @@
 
       1. #### install:
 
-            ```shell
+            ```shell-script
 
                   npm install -g lang2idl
 
@@ -16,7 +16,7 @@
 
             create json idl from groovy: 
 
-            ```shell
+            ```shell-script
 
                   groovy2idl "groovy files or dir path" // the files path is not must if current folder had groovy files.
 
@@ -24,7 +24,7 @@
 
             create json idl from c#: 
 
-            ```shell
+            ```shell-script
 
                   cs2idl "cs files or dir path" // the files path is not must if current folder had cs files.
 
@@ -32,7 +32,7 @@
 
             create typescript from json idl: 
 
-            ```shell
+            ```shell-script
 
                   idl2ts "json idl file path" // the json idl file path is must.
 
@@ -40,7 +40,7 @@
 
             create groovy from json idl: 
 
-            ```shell
+            ```shell-script
 
                   idl2groovy "json idl file path" // the json idl file path is must.
 
@@ -48,7 +48,7 @@
 
             create cs from json idl: 
 
-            ```shell
+            ```shell-script
 
                   idl2cs "json idl file path" // the json idl file path is must.
 
