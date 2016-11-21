@@ -7,53 +7,36 @@
 * #### 1、install
 
 ```console
-
-      npm install -g lang2idl
-
+npm install -g lang2idl
 ```
 
 
 * #### 2、use
 
-* * create json idl from groovy: 
-
-```console
-
+  * create json idl from groovy: 
+      ```console
       groovy2idl "groovy files or dir path" // the files path is not must if current folder had groovy files.
+      ```
 
-```
-
-* * create json idl from c#: 
-
-```console
-
+  * create json idl from c#: 
+      ```console
       cs2idl "cs files or dir path" // the files path is not must if current folder had cs files.
+      ```
 
-```
-
-* * create typescript from json idl: 
-
-```console
-
+  * create typescript from json idl: 
+      ```console
       idl2ts "json idl file path" // the json idl file path is must.
+      ```
 
-```
-
-* * create groovy from json idl: 
-
-```console
-
+  * create groovy from json idl: 
+      ```console
       idl2groovy "json idl file path" // the json idl file path is must.
+      ```
 
-```
-
-* * create cs from json idl: 
-
-```console
-
+  * create cs from json idl: 
+      ```console
       idl2cs "json idl file path" // the json idl file path is must.
-
-```
+      ```
 
 
 
