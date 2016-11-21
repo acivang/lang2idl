@@ -4,12 +4,12 @@
 
 2. ### How use?
 
-* #### 1、install
+* #### 1、install:
 
-```console
-npm install -g lang2idl
-```
-
+  * npm install:
+      ```console
+      npm install -g lang2idl
+      ```
 
 * #### 2、use
 
