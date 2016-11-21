@@ -6,11 +6,11 @@
 
       1. #### install:
 
-            ```console
+```console
 
-                  npm install -g lang2idl
+      npm install -g lang2idl
 
-            ```
+```
 
       2. #### use
 
