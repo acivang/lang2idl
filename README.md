@@ -7,6 +7,7 @@
 * #### 1、install:
 
   * npm install:
+  
       ```console
       npm install -g lang2idl
       ```
