@@ -4,7 +4,7 @@
 
 2. ### How use?
 
-      1. #### install:
+* #### 1、install
 
 ```console
 
@@ -12,7 +12,8 @@
 
 ```
 
-      2. #### use
+
+* #### 2、use
 
             create json idl from groovy: 
 
