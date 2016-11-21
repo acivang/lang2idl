@@ -15,7 +15,7 @@
 
 * #### 2、use
 
-            create json idl from groovy: 
+* * create json idl from groovy: 
 
 ```console
 
@@ -23,7 +23,7 @@
 
 ```
 
-            create json idl from c#: 
+* * create json idl from c#: 
 
 ```console
 
@@ -31,7 +31,7 @@
 
 ```
 
-            create typescript from json idl: 
+* * create typescript from json idl: 
 
 ```console
 
@@ -39,7 +39,7 @@
 
 ```
 
-            create groovy from json idl: 
+* * create groovy from json idl: 
 
 ```console
 
@@ -47,7 +47,7 @@
 
 ```
 
-            create cs from json idl: 
+* * create cs from json idl: 
 
 ```console
 
