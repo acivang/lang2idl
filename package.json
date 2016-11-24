@@ -1,6 +1,6 @@
 {
     "name": "lang2idl",
-    "version": "0.0.4",
+    "version": "0.0.6",
     "description": "programming language interface to idl.and idl to programing language.",
     "scripts": {
         "groovy2idl": "tsc & node ./dist/index.js groovy2idl ",

@@ -150,7 +150,7 @@ export let getInterfaces = (interfaces: any, path: string) => {
     interfaceCodes.push(methodCode.join(";\n\n"));
     interfaceCodes.push("}");
     // interfaceCodes.push("}");
-    let directory: string  = `${path}${item.package.replace(/\./g, osPath.sep)}/`;
+    let directory: string  = `${path}/${item.package.replace(/\./g, osPath.sep)}/`;
 
     fileHelper.saveFile(`${directory}${item.name.toLowerCase()}.ts`, interfaceCodes.join("\n"));
     log.info(`file had created: ${directory}${item.name}.ts.`);

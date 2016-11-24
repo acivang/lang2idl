@@ -19,15 +19,15 @@ import { log } from './src/utils/log';
    * @memberOf Converter
    */
   export let convert = (command: string, file?: string) => {
-
+    let currentDir: string = process.cwd();
     if(!file && (command === 'groovy2idl' || command === 'cs2idl')){
-      file = __dirname;
+      file = currentDir;
     }
 
     if (!fs.existsSync(file)) {
-      file = osPath.join(__dirname, file);
+      file = osPath.join(currentDir, file);
       if (!fs.existsSync(file)) {
-        file = osPath.join(__dirname, file, '/');
+        file = osPath.join(currentDir, file, '/');
       }
     } 
 
