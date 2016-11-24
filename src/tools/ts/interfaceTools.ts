@@ -22,8 +22,7 @@ export let getInterfaces = (interfaces: any, path: string) => {
       doc.push(` * ${method.doc}`);
       doc.push(' *')
       let importName: string = "";
-      for (let l: number = 0; l < method.args.length; l++) {
-        let arg: any = method.args[l];
+      for (let arg of method.args) {
         if (!arg.name) {
           break;
         }
