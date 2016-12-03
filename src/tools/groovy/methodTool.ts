@@ -55,7 +55,7 @@ let getMethod = (methodCode: string) => {
 
   method.doc = doc.getObjectDoc(methodCode);
   method.return.doc = doc.getMethodReturnDoc(methodCode);
-  if (!method.doc || !method.return.doc) {
+  if (!method.doc || (method.return.type !== "void" && !method.return.doc)) {
     throw new MissingCommentError(`${method.name}`);
   }
 

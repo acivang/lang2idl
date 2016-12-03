@@ -50,4 +50,12 @@ export class FileHelper {
     }
     fileStream.writeFileSync(`${path}`, text);
   }
+
+  public exists(file: string): boolean {
+    return fileStream.existsSync(file);
+  }
+
+  public read(file: string): string {
+    return fileStream.readFileSync(file).toString();
+  }
 }
