@@ -26,6 +26,8 @@
       cs2idl "cs files or dir path" // the files path is not must if current folder had cs files.
       ```
 
+    Before execute follows command, you need change the json idl file name as a package name, for example:nofdev-userfacade.
+
   * create typescript from json idl: 
   
       ```console
