@@ -6,12 +6,13 @@ import { FileHelper } from '../../utils/files';
 
 let fileHelper = new FileHelper();
 
-export let getInterfaces = (interfaces: any, path: string) => {
+export let getInterfaces = (interfaces: any, path: string): any => {
   for (let item of interfaces) {
     let imports: Array<string> = new Array();
     let importsDic: { [key: string]: boolean } = {};
     let methods: Array<string> = new Array();
     let interfaceCodes: Array<string> = new Array();
+    let mainImports: Array<string> = new Array();
 
     let methodCode: Array<string> = new Array();
     for (let method of item.methods) {
@@ -140,6 +141,7 @@ export let getInterfaces = (interfaces: any, path: string) => {
       methodCode.push(`${doc.join('\n')}\n${methodLine}`)
     }
     interfaceCodes.push(imports.join("\n"));
+    mainImports.push(`export * from './${item.package.replace(/\./g, osPath.sep)}/${item.name.toLowerCase()}'`);
     // interfaceCodes.push(`\nnamespace ${item.package}{\n`);
     if (item.doc) {
       interfaceCodes.push('/**');
@@ -150,9 +152,10 @@ export let getInterfaces = (interfaces: any, path: string) => {
     interfaceCodes.push(methodCode.join(";\n\n"));
     interfaceCodes.push("}");
     // interfaceCodes.push("}");
-    let directory: string  = `${path}/${item.package.replace(/\./g, osPath.sep)}/`;
-
-    fileHelper.saveFile(`${directory}${item.name.toLowerCase()}.ts`, interfaceCodes.join("\n"));
-    log.info(`file had created: ${directory}${item.name}.ts.`);
+    let directory: string  = osPath.join(path, item.package.replace(/\./g, osPath.sep));
+    let filePath: string = osPath.join(directory,`${item.name.toLowerCase()}.ts`);
+    fileHelper.saveFile(filePath, interfaceCodes.join("\n"));
+    log.info(`file had created: ${filePath}`);
+    return mainImports;
   }
 }

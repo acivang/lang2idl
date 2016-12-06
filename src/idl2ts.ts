@@ -28,11 +28,13 @@ export function convert(filePath: string): void {
 
   let dirname = path.dirname(filePath);
 
-  dirname = path.join(dirname, 'package');
+  dirname = path.join(dirname, 'npm-package');
 
   npm.name = path.basename(filePath, '.json');
   fileHelper.saveFile(path.join(dirname, 'package.json'), JSON.stringify(npm));
 
-  getInterfaces(code.interfaces, dirname);
+  let mainFileValue: string = getInterfaces(code.interfaces, dirname).join(";");
+  fileHelper.saveFile(path.join(dirname, 'main.ts'), mainFileValue);
   getTypes(code.types, dirname);
+  log.info(`npm package had create at ${dirname}`);
 }

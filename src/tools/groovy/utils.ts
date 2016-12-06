@@ -25,6 +25,7 @@ export let getPackage = (code: string): string => {
  */
 export let getObjectName = (code: string): string => {
   let name: string;
-  name = code.match(/(interface|class|enum)((\s*?.*?)*?){/)[0].replace(/(interface|class|enum)| |{/g, '');
+  
+  name = code.match(/(interface|class|enum)((\s*?.*?)*?)( extends|{)/)[0].replace(/(interface|class|enum)| extends| |{/g, '');
   return name;
 }

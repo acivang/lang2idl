@@ -8,6 +8,5 @@ export let npm = {
     "author": "nofdev",
     "license": "ISC",
     "homepage": "https://github.com/nofdev",
-    "main": "./main.js",
-    "types": "./main.d.ts"
+    "types": "./main.ts"
 };

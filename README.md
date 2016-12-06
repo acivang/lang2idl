@@ -44,6 +44,20 @@
       idl2cs "json idl file path" // the json idl file path is must.
       ```
 
+* #### 3、publish:
+
+    After convert json idl to lang file, you can publish it to npmjs/nuget/maven repository, then other developer can use it as a package.
+
+  * npm package:
+
+    ```console
+    cd npm-package
+
+    npm build
+
+    npm publish
+    ```
+
 
 
 3. ### About code document

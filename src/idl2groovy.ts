@@ -1,5 +1,6 @@
 import * as fileStream from 'fs';
 import * as path from 'path';
+import { log } from './utils/log';
 import { MissingFileError, CodeFormatError } from './utils/error';
 import { InterfaceTool } from './tools/groovy/interfaceTool';
 import { TypeTool } from './tools/groovy/TypeTool';
