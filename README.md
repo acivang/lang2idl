@@ -12,11 +12,13 @@
       npm install -g lang2idl
       ```
 
+          or
+
       ```console
       git clone git@github.com:nofdev/lang2idl.git
 
       cd lang2idl
-      
+
       npm link #this command will install the package to global.
       ```
 
