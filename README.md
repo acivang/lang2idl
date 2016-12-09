@@ -12,6 +12,14 @@
       npm install -g lang2idl
       ```
 
+      ```console
+      git clone git@github.com:nofdev/lang2idl.git
+
+      cd lang2idl
+      
+      npm link #this command will install the package to global.
+      ```
+
 * #### 2、use
 
   * create json idl from groovy: 
