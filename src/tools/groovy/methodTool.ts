@@ -2,7 +2,7 @@
 import * as struct from '../../utils/struct';
 import { Ducoment as Doc } from './docTool';
 import * as utils from './utils';
-import {TypeTool} from './TypeTool';
+import {TypeTool} from './typeTool';
 import { MissingMethodError, MissingCommentError, CodeFormatError } from '../../utils/error';
 
 

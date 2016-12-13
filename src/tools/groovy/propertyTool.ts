@@ -1,7 +1,7 @@
 
 import * as utils from './utils';
 import { Ducoment as Doc } from './docTool';
-import { TypeTool } from './TypeTool';
+import { TypeTool } from './typeTool';
 import { MissingPropertyError, MissingCommentError, PropertySybolError } from '../../utils/error';
 
 let fileName: string;
