@@ -1,5 +1,5 @@
 import * as utils from './utils';
-import { MissingMethodError, MissingCommentError, MissingPropertyError, CodeFormatError } from '../../utils/error';
+import { MissingCommentError } from '../../utils/error';
 
 export class Ducoment {
 
@@ -15,7 +15,9 @@ export class Ducoment {
     let doc: string;
 
     let doces = code.match(/\/\*\*((\s*?.*?)*?)\*\//);
-    
+    if(!doces){
+      throw new MissingCommentError(`${ code }`)
+    }
     return doces[0].split('\n')[1].replace(/\n|\*| /g, '');
   }
 

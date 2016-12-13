@@ -9,10 +9,10 @@ export class FileHelper {
   private _counter: number = 0;
 
   public getAllFiles(path: string): string[] {
-    this._counter++;
-    if (this._counter > 10) {
-      throw new RecursionMaxError(`${this._counter}`);
-    }
+    // this._counter++;
+    // if (this._counter > 10) {
+    //   throw new RecursionMaxError(`${this._counter}`);
+    // }
     if (!fileStream.existsSync(path)) {
       throw new MissingFileError(`'${path}'`);
     }

@@ -23,7 +23,8 @@ let groovyTypeMap: { [type: string]: boolean } = {
   ['bigdecimal']: true,
   ['biginteger']: true,
   ['integer']: true,
-  ['long']: true
+  ['long']: true,
+  ['date']: true
 };
 let imports: string[];
 let packagetool = new packageTool();

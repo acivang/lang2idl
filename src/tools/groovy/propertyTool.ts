@@ -49,6 +49,9 @@ let getProperty = (propertyCode: string, code: string, isEnum?: boolean) => {
   };
   let originCode = propertyCode.substring(propertyCode.indexOf('*/') + 2);
   if (!isEnum) {
+    if(originCode.indexOf('@') > -1){
+      originCode = originCode.substring(originCode.lastIndexOf('\n'));
+    }
     let tmp: string[] = originCode.match(/[_a-zA-Z]((\s*?.*?)*?)[a-zA-Z;\n\d]$/)[0].replace(/\n|;/g, '').split(' ');
     let typeParam: any = typetool.getType(tmp[0]);
     propertyName = tmp[1];

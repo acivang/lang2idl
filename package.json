@@ -3,7 +3,7 @@
     "version": "0.0.6",
     "description": "programming language interface to idl.and idl to programing language.",
     "scripts": {
-        "build": "tsc",
+        "build": "npm i && tsc",
         "groovy2idl": "tsc & node ./groovy2idl.js",
         "cs2idl": "tsc & node ./cs2idl.js",
         "idl2ts": "tsc & node ./idl2ts.js"

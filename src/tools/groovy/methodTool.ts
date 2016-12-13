@@ -8,9 +8,11 @@ import { MissingMethodError, MissingCommentError, CodeFormatError } from '../../
 
 let doc = new Doc();
 let typetool = new TypeTool();
+let className: string;
 
 export let getMethods = (code: string, typeFilesMap: { [key: string]: string }): any => {
   let methods: any = [];
+  this.className = utils.getObjectName(code);
   typetool.typeFilesMap = typeFilesMap;
   let methodCode = code.substring(code.indexOf("{"));
   if (!methodCode) {
@@ -64,7 +66,7 @@ let getMethod = (methodCode: string) => {
   if (argsTmp.length > 0) {
     let args = argsTmp.split(',');
     if (args.length !== argsDoces.length) {
-      throw new MissingCommentError(`${method.name}`);
+      throw new MissingCommentError(`${method.name} in class of ${ this.className }`);
     }
     for (let i in args) {
       let methodArg: any = {

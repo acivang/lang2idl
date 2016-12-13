@@ -6,7 +6,7 @@ import { MissingMethodError, MissingCommentError, CodeFormatError, MissingFileEr
 import { FileHelper } from '../../utils/files';
 import { log } from '../../utils/log';
 
-//groovy类型字典
+//cs类型字典
 let csharpTypeMap: { [type: string]: boolean } = {
   ['double']: true,
   ['flout']: true,

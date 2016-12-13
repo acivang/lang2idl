@@ -27,9 +27,9 @@ export function convert(path: string): void {
       continue;
     }
     let fileName: string = osPath.basename(file, '.groovy').toLowerCase();
-    if (fileName.indexOf('facade') > -1) {
+    if (fileName.endsWith('facade')) {
       facadeFiles.push(file);
-    } else {
+    } else if(osPath.dirname(file).endsWith('dto') || fileName.endsWith('dto')){
       typeFiles.push(file);
       typeFilesMap[fileName] = file;
     }
@@ -38,11 +38,11 @@ export function convert(path: string): void {
 
   interfaceTool.typeFilesMap = typeFilesMap;
 
-  for (let file of facadeFiles) {
-    let interfaceCode = fileStream.readFileSync(file).toString();
-    let itemInterface = interfaceTool.getInterface(interfaceCode);
-    idl.interfaces.push(itemInterface);
-  }
+  // for (let file of facadeFiles) {
+  //   let interfaceCode = fileStream.readFileSync(file).toString();
+  //   let itemInterface = interfaceTool.getInterface(interfaceCode);
+  //   idl.interfaces.push(itemInterface);
+  // }
 
   for (let file of typeFiles) {
     let typeCode = fileStream.readFileSync(file).toString();
@@ -58,19 +58,20 @@ export function convert(path: string): void {
   let jsonIdl: any = JSON.stringify(idl);
   let filePath: string = osPath.join(path, 'idl.json');
   fileStream.writeFile(filePath, jsonIdl, () => {
-    log.info(`idl json file had created: ${ filePath }`);
+    log.info(`idl json file had created: ${filePath}`);
   });
 
   jsonIdl = `export let jsonIdl = ${jsonIdl}`;
   filePath = osPath.join(path, 'idl.ts');
   fileStream.writeFile(filePath, jsonIdl, () => {
-    log.info(`idl ts file had created: ${ filePath }`);
+    log.info(`idl ts file had created: ${filePath}`);
   });
 }
 
 
 function getType(code: string): any {
-  if (/class ((\s*.)*?)DTO/.test(code)) {
+  // if (/class ((\s*.)*?)DTO/.test(code)) {
+  if (code.indexOf('DTO {') > -1 || code.indexOf('DTO{') > -1) {
     return getClasses(code, typeFilesMap);
   } else if (code.indexOf('enum ') > -1) {
     return getEnums(code, typeFilesMap);

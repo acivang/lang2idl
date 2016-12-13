@@ -58,7 +58,7 @@ export class MissingFileError extends Error {
 
   constructor(public msg?: string) {
     super(msg);
-    this.message = `Missing file or fold: ${msg}`;
+    this.message = `Missing file or folder: ${msg}`;
     this.name = "MissingFileError";
   }
   
