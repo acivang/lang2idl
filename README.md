@@ -19,7 +19,7 @@
 
       cd lang2idl
 
-      npm link #this command will install the package to global.
+      npm link #this command will create a link to current folder.
       ```
 
 * #### 2、use
