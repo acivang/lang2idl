@@ -3,7 +3,7 @@ import * as path from 'path';
 import { log } from './utils/log';
 import { MissingFileError, CodeFormatError } from './utils/error';
 import { InterfaceTool } from './tools/groovy/interfaceTool';
-import { TypeTool } from './tools/groovy/TypeTool';
+import { TypeTool } from './tools/groovy/typeTool';
 
 export function convert(filePath: string): void {
 
