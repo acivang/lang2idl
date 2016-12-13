@@ -1,95 +1,97 @@
-"use strict";
-const struct = require('../../utils/struct');
-const docTool_1 = require('./docTool');
-const utils = require('./utils');
-const TypeTool_1 = require('./typeTool');
-const error_1 = require('../../utils/error');
-let doc = new docTool_1.Ducoment();
-let typetool = new TypeTool_1.TypeTool();
-exports.getMethods = (code, typeFilesMap) => {
-    let methods = [];
-    typetool.typeFilesMap = typeFilesMap;
-    let methodCode = code.substring(code.indexOf("{"));
-    if (!methodCode) {
-        throw new error_1.MissingMethodError(`${utils.getObjectName(code)}.groovy/.java`);
-    }
-    methodCode = methodCode.replace(/({|})\n\n|\n}|\n\n}/g, '');
-    let methodBlocks = methodCode.split('\n\n'); //methodCode.split(';');
-    for (let block of methodBlocks) {
-        let method = getMethod(block);
-        methods.push(method);
-    }
-    return methods;
-};
-let getMethod = (methodCode) => {
-    let method = struct.methodStruct();
-    let methodName = methodCode.match(/[a-zA-Z](w?.)*\(/);
-    if (!methodName) {
-        throw new error_1.CodeFormatError(`can't get method name from ${methodCode}`);
-    }
-    if (methodName[0].indexOf('<') > -1) {
-        method.name = methodName[0].match(/(>[ ]|>)(w?.)*\(/)[0].replace(/> |>|\(/g, '');
-    } else {
-        method.name = methodName[0].match(/[ ](w?.)*\(/)[0].replace(/ |\(/g, '');
-    }
-    method.return.type = methodName[0].match(/[a-zA-Z](w?.)* /)[0].replace(/ | /g, '');
-    let typeWithTypeParams = typetool.getType(method.return.type);
-    if (typeWithTypeParams.typeParams) {
-        method.return.type = typeWithTypeParams.type;
-        method.return.typeParams = typeWithTypeParams.typeParams;
-    } else {
-        method.return.type = typeWithTypeParams.type;
-    }
-    method.doc = doc.getObjectDoc(methodCode);
-    method.return.doc = doc.getMethodReturnDoc(methodCode);
-    if (!method.doc || (method.return.type !== "void" && !method.return.doc)) {
-        throw new error_1.MissingCommentError(`${method.name}`);
-    }
-    let argsDoces = doc.getMethodArgsDoc(methodCode);
-    let argsTmp = methodCode.match(/\(((\s*?.*?)*?)\)/g)[0].replace(/\(|\)/g, '');
-    if (argsTmp.length > 0) {
-        let args = argsTmp.split(',');
-        if (args.length !== argsDoces.length) {
-            throw new error_1.MissingCommentError(`${method.name}`);
-        }
-        for (let i in args) {
-            let methodArg = {
-                name: '',
-                type: '',
-                doc: ''
-            };
-            let tmp = args[i].split(' ');
-            let paramType = tmp[0];
-            if (args[i].indexOf(' ') === 0) {
-                paramType = tmp[1];
-            }
-            if (paramType.length === 0) {
-                paramType = tmp[1];
-            }
-            let argType = typetool.getType(paramType);
-            if (argType.type !== "undefined") {
-                methodArg.type = argType.type;
-                if (argType.typeParams) {
-                    methodArg.typeParams = argType.typeParams;
-                }
-                methodArg.name = tmp[1];
-                if (args[i].indexOf(' ') === 0) {
-                    methodArg.name = tmp[2];
-                }
-                methodArg.doc = argsDoces[i].replace(/@param |\n/g, '');
-                method.args.push(methodArg);
-            }
-        }
-    }
-    if (method.args.length === 0) {
-        method.args.push({});
-    }
-    if (method.throws.length === 0) {
-        method.throws.push({});
-    }
-    return method;
-};
-//# sourceMappingURL=methodTool.js.map
+1. ### What is it?
+
+            this is a tool for create a json idl(interface description lanauge) from groovy/java/c# etc, and convert idl to typescript/java/groovy/c# etc.
+
+2. ### How use?
+
+* #### 1、install:
+
+  * npm install:
+  
+      ```console
+      npm install -g lang2idl
+      ```
+
+          or
+
+      ```console
+      git clone git@github.com:nofdev/lang2idl.git
+
+      cd lang2idl
+
+      npm link #this command will install the package to global.
+      ```
+
+* #### 2、use
+
+  * create json idl from groovy: 
+  
+      ```console
+      groovy2idl "groovy files or dir path" // the files path is not must if current folder had groovy files.
+      ```
+
+  * create json idl from c#: 
+  
+      ```console
+      cs2idl "cs files or dir path" // the files path is not must if current folder had cs files.
+      ```
+
+    Before execute commands below, you need change the json idl file name as a package name, for example:nofdev-userfacade.
+
+  * create typescript from json idl: 
+  
+      ```console
+      idl2ts "json idl file path" // the json idl file path is must.
+      ```
+
+  * create groovy from json idl: 
+  
+      ```console
+      idl2groovy "json idl file path" // the json idl file path is must.
+      ```
+
+  * create cs from json idl: 
+  
+      ```console
+      idl2cs "json idl file path" // the json idl file path is must.
+      ```
+
+* #### 3、publish:
+
+    After convert json idl to lang file, you can publish it to npmjs/nuget/maven repository, then other developer can use it as a package.
+
+  * npm package:
+
+    ```console
+    cd npm-package
+
+    npm build
+
+    npm publish
+    ```
+
+
+
+3. ### About code document
+ 
+      Standard code：
+      
+      ```java
+
+        /**
+        * 换绑手机号（没有关联护照的账号，可以正常绑定手机号和修改绑定的手机号）
+        * @description 1.判断手机号是否已绑定网账号，如果已绑定，不能换绑
+        * @description 2.判断手机号是否是护照
+        * @description   2.1. 如果是护照，验证护照手机号+验证码登录的逻辑，换绑网手机号、绑定护照
+        * @description   2.2. 如果不是护照，验证网换绑手机号的短信验证，走网换绑手机号的逻辑
+        * @author MengQiang
+        * @param mobile 换绑后的手机号
+        * @param smsVerificationCode 短信验证码
+        * @param smsTokenId 短信验证码TokenId
+        * */
+        void changeBindingMobileForMe(String mobile, String smsVerificationCode,String smsTokenId);Ï
+
+      ```
 
       The comments that not start with '@' is method's comments.
       Start with '@author' is the author of code block.
