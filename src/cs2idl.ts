@@ -29,10 +29,10 @@ export function convert(path: string): void {
     }
 
     let fileName: string = osPath.basename(file, '.cs').toLowerCase();
-    if (fileName.indexOf('facade') > -1) {
+    if (fileName.endsWith('facade')) {
       facadeFiles.push(file);
 
-    } else {
+    } else if (osPath.dirname(file).endsWith('dto') || fileName.endsWith('dto')) {
 
       typeFiles.push(file);
       typeFilesMap[fileName] = file;

@@ -29,7 +29,7 @@ export function convert(path: string): void {
     let fileName: string = osPath.basename(file, '.groovy').toLowerCase();
     if (fileName.endsWith('facade')) {
       facadeFiles.push(file);
-    } else if(osPath.dirname(file).endsWith('dto') || fileName.endsWith('dto')){
+    } else if (osPath.dirname(file).endsWith('dto') || fileName.endsWith('dto')) {
       typeFiles.push(file);
       typeFilesMap[fileName] = file;
     }
@@ -57,15 +57,13 @@ export function convert(path: string): void {
   }
   let jsonIdl: any = JSON.stringify(idl);
   let filePath: string = osPath.join(path, 'idl.json');
-  fileStream.writeFile(filePath, jsonIdl, () => {
-    log.info(`idl json file had created: ${filePath}`);
-  });
+  fileStream.writeFileSync(filePath, jsonIdl);
+  log.info(`idl json file had created: ${filePath}`);
 
   jsonIdl = `export let jsonIdl = ${jsonIdl}`;
   filePath = osPath.join(path, 'idl.ts');
-  fileStream.writeFile(filePath, jsonIdl, () => {
-    log.info(`idl ts file had created: ${filePath}`);
-  });
+  fileStream.writeFileSync(filePath, jsonIdl);
+  log.info(`idl ts file had created: ${filePath}`)
 }
 
 
