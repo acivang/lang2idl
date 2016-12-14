@@ -31,7 +31,9 @@ let csharpTypeMap: { [type: string]: boolean } = {
   ['sbyte']: true,
   ['uint']: true,
   ['ulong']: true,
-  ['ushort']: true
+  ['ushort']: true,
+  ['date']: true,
+  ['datetime']: true
 };
 let usings: string[];
 let namespacetool = new namespaceTool();
