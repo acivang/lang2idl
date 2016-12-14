@@ -24,7 +24,8 @@ let groovyTypeMap: { [type: string]: boolean } = {
   ['biginteger']: true,
   ['integer']: true,
   ['long']: true,
-  ['date']: true
+  ['date']: true,
+  ['datetime']: true
 };
 let imports: string[];
 let packagetool = new packageTool();
