@@ -38,11 +38,11 @@ export function convert(path: string): void {
 
   interfaceTool.typeFilesMap = typeFilesMap;
 
-  // for (let file of facadeFiles) {
-  //   let interfaceCode = fileStream.readFileSync(file).toString();
-  //   let itemInterface = interfaceTool.getInterface(interfaceCode);
-  //   idl.interfaces.push(itemInterface);
-  // }
+  for (let file of facadeFiles) {
+    let interfaceCode = fileStream.readFileSync(file).toString();
+    let itemInterface = interfaceTool.getInterface(interfaceCode);
+    idl.interfaces.push(itemInterface);
+  }
 
   for (let file of typeFiles) {
     let typeCode = fileStream.readFileSync(file).toString();
@@ -60,10 +60,10 @@ export function convert(path: string): void {
   fileStream.writeFileSync(filePath, jsonIdl);
   log.info(`idl json file had created: ${filePath}`);
 
-  jsonIdl = `export let jsonIdl = ${jsonIdl}`;
-  filePath = osPath.join(path, 'idl.ts');
-  fileStream.writeFileSync(filePath, jsonIdl);
-  log.info(`idl ts file had created: ${filePath}`)
+  // jsonIdl = `export let jsonIdl = ${jsonIdl}`;
+  // filePath = osPath.join(path, 'idl.ts');
+  // fileStream.writeFileSync(filePath, jsonIdl);
+  // log.info(`idl ts file had created: ${filePath}`)
 }
 
 

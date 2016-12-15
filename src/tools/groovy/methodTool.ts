@@ -66,7 +66,7 @@ let getMethod = (methodCode: string) => {
   if (argsTmp.length > 0) {
     let args = argsTmp.split(',');
     if (args.length !== argsDoces.length) {
-      throw new MissingCommentError(`${method.name} in class of ${ this.className }`);
+      throw new MissingCommentError(`method of "${method.name}"'s args in class of ${ this.className }`);
     }
     for (let i in args) {
       let methodArg: any = {
