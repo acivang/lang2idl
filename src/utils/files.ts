@@ -58,4 +58,8 @@ export class FileHelper {
   public read(file: string): string {
     return fileStream.readFileSync(file).toString();
   }
+
+  public copyFile(sourceFile: string, goalFile: string) {
+    fileStream.createReadStream(sourceFile).pipe(fileStream.createWriteStream(goalFile));
+  }
 }

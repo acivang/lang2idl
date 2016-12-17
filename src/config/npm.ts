@@ -5,8 +5,12 @@ export let npm = {
     "keywords": [
         "nofdev"
     ],
+    "scripts":{
+        "build":"tsc"
+    },
+    "main":"main.js",
+    "types":"main.d.ts",
     "author": "nofdev",
     "license": "ISC",
-    "homepage": "https://github.com/nofdev",
-    "types": "./main.ts"
+    "homepage": "https://github.com/nofdev"
 };

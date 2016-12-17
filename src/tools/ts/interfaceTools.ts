@@ -110,7 +110,7 @@ export let getInterfaces = (interfaces: any, path: string): any => {
           default:
             returnType = dataType.toTsType(method.return.type);
         }
-        methodLine = `${method.name}(${args.join(", ")}): Promise<${returnType}>`;
+        methodLine = `${method.name}(${args.join(", ")}): Observable<${returnType}>`;
       } else {
         importName = method.return.type.substring(method.return.type.lastIndexOf(".") + 1);
         if (!importsDic[importName] && item.package !== importName && dataType.canImport(importName)) {
@@ -132,16 +132,17 @@ export let getInterfaces = (interfaces: any, path: string): any => {
             typeParams.push(typeParam);
           }
 
-          methodLine = `${method.name}(${args.join(", ")}): Promise<${method.return.type.substring(method.return.type.lastIndexOf(".") + 1)}<${typeParams.join(", ")}>>`;
+          methodLine = `${method.name}(${args.join(", ")}): Observable<${method.return.type.substring(method.return.type.lastIndexOf(".") + 1)}<${typeParams.join(", ")}>>`;
         } else {
 
-          methodLine = `${method.name}(${args.join(", ")}): Promise<${method.return.type.substring(method.return.type.lastIndexOf(".") + 1)}>`;
+          methodLine = `${method.name}(${args.join(", ")}): Observable<${method.return.type.substring(method.return.type.lastIndexOf(".") + 1)}>`;
         }
       }
       methodCode.push(`${doc.join('\n')}\n${methodLine}`)
     }
+    imports.push("import {Observable} from 'rxjs/Observable';");// for Observable
     interfaceCodes.push(imports.join("\n"));
-    mainImports.push(`export * from './${item.package.replace(/\./g, osPath.sep)}/${item.name.toLowerCase()}'`);
+    mainImports.push(`export * from './${item.package.replace(/\./g, osPath.sep)}/${item.name.toLowerCase()}';`);
     // interfaceCodes.push(`\nnamespace ${item.package}{\n`);
     if (item.doc) {
       interfaceCodes.push('/**');
@@ -155,7 +156,14 @@ export let getInterfaces = (interfaces: any, path: string): any => {
     let directory: string  = osPath.join(path, item.package.replace(/\./g, osPath.sep));
     let filePath: string = osPath.join(directory,`${item.name.toLowerCase()}.ts`);
     fileHelper.saveFile(filePath, interfaceCodes.join("\n"));
+
+    let json = `export let ${item.name.toLowerCase()}Json = ${JSON.stringify(interfaces)};`;
+    filePath = osPath.join(directory, `${item.name.toLowerCase()}Json.ts`);
+    fileStream.writeFileSync(filePath, json);
+    mainImports.push(`export * from './${item.package.replace(/\./g, osPath.sep)}/${item.name.toLowerCase()}Json';`);
+
     log.info(`file had created: ${filePath}`);
-    return mainImports;
+    
+    return mainImports.join('\n');
   }
 }

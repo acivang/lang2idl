@@ -1,39 +1,40 @@
 {
-    "name": "lang2idl",
-    "version": "0.0.6",
-    "description": "programming language interface to idl.and idl to programing language.",
-    "scripts": {
-        "build": "npm i && tsc",
-        "groovy2idl": "tsc & node ./groovy2idl.js",
-        "cs2idl": "tsc & node ./cs2idl.js",
-        "idl2ts": "tsc & node ./idl2ts.js"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/acivang/lang2idl.git"
-    },
-    "keywords": [
-        "idl",
-        "groovy",
-        "typescript",
-        "c#",
-        "json"
-    ],
-    "author": "aci",
-    "license": "ISC",
-    "bugs": {
-        "url": "https://github.com/acivang/lang2idl/issues"
-    },
-    "homepage": "https://github.com/acivang/lang2idl#readme",
-    "dependencies": {
-        "optimist": "^0.6.1",
-        "typescript": "^1.8.10"
-    },
-    "main": "./dist/index.js",
-    "bin": {
-        "groovy2idl": "groovy2idl.js",
-        "cs2idl": "cs2idl.js",
-        "idl2ts": "idl2ts.js"
-    },
-    "preferGlobal": true
+  "name": "lang2idl",
+  "version": "0.0.6",
+  "description": "programming language interface to idl.and idl to programing language.",
+  "scripts": {
+    "build": "npm i && tsc",
+    "groovy2idl": "tsc & node ./groovy2idl.js",
+    "cs2idl": "tsc & node ./cs2idl.js",
+    "idl2ts": "tsc & node ./idl2ts.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/acivang/lang2idl.git"
+  },
+  "keywords": [
+    "idl",
+    "groovy",
+    "typescript",
+    "c#",
+    "json"
+  ],
+  "author": "aci",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/acivang/lang2idl/issues"
+  },
+  "homepage": "https://github.com/acivang/lang2idl#readme",
+  "dependencies": {
+    "optimist": "^0.6.1",
+    "rxjs": "^5.0.1",
+    "typescript": "^1.8.10"
+  },
+  "main": "./dist/index.js",
+  "bin": {
+    "groovy2idl": "groovy2idl.js",
+    "cs2idl": "cs2idl.js",
+    "idl2ts": "idl2ts.js"
+  },
+  "preferGlobal": true
 }

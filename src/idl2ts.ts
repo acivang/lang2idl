@@ -5,7 +5,9 @@ import { getInterfaces } from './tools/ts/interfaceTools';
 import { getTypes } from './tools/ts/typeTools';
 import { FileHelper } from './utils/files';
 import { MissingFileError, CodeFormatError } from './utils/error';
-import { npm } from './source/npm';
+import { npm } from './config/npm';
+import { tsconfig } from './config/ts';
+import { npmignore } from './config/npmignore'
 
 let fileHelper = new FileHelper();
 
@@ -32,8 +34,10 @@ export function convert(filePath: string): void {
 
   npm.name = path.basename(filePath, '.json');
   fileHelper.saveFile(path.join(dirname, 'package.json'), JSON.stringify(npm));
+  fileHelper.saveFile(path.join(dirname, 'tsconfig.json'), JSON.stringify(tsconfig));
+  fileHelper.saveFile(path.join(dirname, '.npmignore'), npmignore.join('\n'));
 
-  let mainFileValue: string = getInterfaces(code.interfaces, dirname).join(";");
+  let mainFileValue: string = getInterfaces(code.interfaces, dirname);
   fileHelper.saveFile(path.join(dirname, 'main.ts'), mainFileValue);
   getTypes(code.types, dirname);
   log.info(`npm package had create at ${dirname}`);
