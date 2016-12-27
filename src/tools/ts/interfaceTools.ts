@@ -27,7 +27,12 @@ export let getInterfaces = (interfaces: any, path: string): any => {
         if (!arg.name) {
           break;
         }
-        doc.push(` * @param ${arg.doc}`);
+        if (arg.eg) {
+          doc.push(` * @param ${arg.doc} eg.${arg.eg}`);
+        }
+        else {
+          doc.push(` * @param ${arg.doc}`);
+        }
         if (arg.type.indexOf('.') < 0) {
           let argType: string;
           let jsonArgType: string = arg.type.toLowerCase();
@@ -153,8 +158,8 @@ export let getInterfaces = (interfaces: any, path: string): any => {
     interfaceCodes.push(methodCode.join(";\n\n"));
     interfaceCodes.push("}");
     // interfaceCodes.push("}");
-    let directory: string  = osPath.join(path, item.package.replace(/\./g, osPath.sep));
-    let filePath: string = osPath.join(directory,`${item.name.toLowerCase()}.ts`);
+    let directory: string = osPath.join(path, item.package.replace(/\./g, osPath.sep));
+    let filePath: string = osPath.join(directory, `${item.name.toLowerCase()}.ts`);
     fileHelper.saveFile(filePath, interfaceCodes.join("\n"));
 
     let json = `export let ${item.name.toLowerCase()}Json = ${JSON.stringify(interfaces)};`;
@@ -163,7 +168,7 @@ export let getInterfaces = (interfaces: any, path: string): any => {
     mainImports.push(`export * from './${item.package.replace(/\./g, osPath.sep)}/${item.name.toLowerCase()}Json';`);
 
     log.info(`file had created: ${filePath}`);
-    
+
     return mainImports.join('\n');
   }
 }
