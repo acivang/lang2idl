@@ -34,7 +34,9 @@
   "bin": {
     "groovy2idl": "groovy2idl.js",
     "cs2idl": "cs2idl.js",
-    "idl2ts": "idl2ts.js"
+    "idl2ts": "idl2ts.js",
+    "idl2groovy": "idl2groovy.js",
+    "idl2cs": "idl2cs.js"
   },
   "preferGlobal": true
 }

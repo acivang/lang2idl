@@ -3,7 +3,7 @@ export class MissingCommentError extends Error {
 
   constructor(public msg?: string) {
     super(msg);
-    this.message = `Missing comment for ${msg}`;
+    this.message = `Missing method's comment or params's comment or return comment for ${msg}`;
     this.name = "MissingCommentError";
   }
   
