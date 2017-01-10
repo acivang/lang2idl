@@ -62,7 +62,7 @@ let getProperty = (propertyCode: string, code: string, isEnum?: boolean) => {
   let startIndex: number = propertyCode.lastIndexOf('public ') + 7;
   let originCode = propertyCode.substring(startIndex);
   if (!isEnum) {
-    let tmp: string[] = originCode.split(' ');/
+    let tmp: string[] = originCode.split(' ');
     let typeParam: any = typetool.getType(tmp[0]);
     propertyName = tmp[1];
     if (typeParam.typeParams) {
