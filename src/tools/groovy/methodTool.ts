@@ -19,8 +19,8 @@ export let getMethods = (code: string, typeFilesMap: { [key: string]: string }):
     throw new MissingMethodError(`${utils.getObjectName(code)}.groovy/.java`);
   }
 
-  methodCode = methodCode.replace(/({|})\n\n|\n}|\n\n}/g, '');
-  let methodBlocks = methodCode.split('\n\n');//methodCode.split(';');
+  methodCode = methodCode.replace(/({|})\r?\n|\r?\n}|\r?\n}/g, '');
+  let methodBlocks = methodCode.split(/\)\r?\n/);//methodCode.split(';');
 
   for (let block of methodBlocks) {
     let method = getMethod(block);

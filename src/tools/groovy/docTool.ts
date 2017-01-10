@@ -18,7 +18,7 @@ export class Ducoment {
     if(!doces){
       throw new MissingCommentError(`${ code }`)
     }
-    return doces[0].split('\n')[1].replace(/\n|\*| /g, '');
+    return doces[0].split(/\r?\n/)[1].replace(/\r?\n|\*| /g, '');
   }
 
   /**
@@ -34,7 +34,7 @@ export class Ducoment {
 
     let tempDoc = code.match(/\@return((\s*?.*?)*?)\n/);
     if (tempDoc) {
-      doc = tempDoc[0].replace(/@return |\n/g, '');
+      doc = tempDoc[0].replace(/@return |\r?\n/g, '');
     }
 
     return doc;

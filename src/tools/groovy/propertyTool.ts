@@ -27,7 +27,7 @@ export let getPropertys = (code: string, typeFilesMap: { [key: string]: string }
   propertyCode = propertyCode.replace(/({|})\n\n|\n}|\n\n}/g, '');
   if (code.indexOf("class ") > -1) {// the object type is class
 
-    propertyBlocks = propertyCode.split('\n\n');
+    propertyBlocks = propertyCode.split(/\n\n|\r\n|\r\n\r\n/);
 
   } else {// the object type is enum
     isEnum = true;
