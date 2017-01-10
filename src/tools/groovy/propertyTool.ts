@@ -27,7 +27,7 @@ export let getPropertys = (code: string, typeFilesMap: { [key: string]: string }
   propertyCode = propertyCode.replace(/({|})\r?\n|\n}|\r?\n}/g, '');
   if (code.indexOf("class ") > -1) {// the object type is class
 
-    propertyBlocks = propertyCode.split(/\n\n|\r?\n|\r\n\r\n/);
+    propertyBlocks = propertyCode.split(/\n\n|\r\n\r\n/);
 
   } else {// the object type is enum
     isEnum = true;
@@ -70,7 +70,7 @@ let getProperty = (propertyCode: string, code: string, isEnum?: boolean) => {
       };
     }
   } else {
-    property.name = originCode.match(/[_a-zA-Z]((\s*?.*?)*?)[a-zA-Z;\r?\n\d]$/)[0].replace(/\r?\n|,/g, '');
+    property.name = originCode.match(/[_a-zA-Z]((\s*?.*?)*?)[a-zA-Z,\r?\n\d]$/)[0].replace(/\r?\n|,/g, '');
     property.doc = getPropertyDoc(propertyCode)
   }
 

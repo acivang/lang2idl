@@ -20,7 +20,7 @@ export let getMethods = (code: string, typeFilesMap: { [key: string]: string }):
   }
 
   methodCode = methodCode.replace(/({|})\r?\n|\r?\n}|\r?\n}/g, '');
-  let methodBlocks = methodCode.split(/\)\r?\n/);
+  let methodBlocks = methodCode.split(/\)\;?\r?\n/);
 
   for (let block of methodBlocks) {
     if(!block){
