@@ -9,7 +9,7 @@
  */
 export let getNamespace = (code: string): string => {
   let name: string;
-  name = code.match(/namespace((\s*?.*?)*?)\n/)[0].replace(/namespace|\;| |\n/g, '');
+  name = code.match(/namespace((\s*?.*?)*?)\n/)[0].replace(/namespace|\;| |\r?\n/g, '');
   return name;
 }
 
@@ -25,6 +25,6 @@ export let getNamespace = (code: string): string => {
  */
 export let getObjectName = (code: string): string => {
   let name: string;
-  name = code.match(/(interface|class|enum)((\s*?.*?)*?){/)[0].replace(/(interface|class|enum)| |{|\n/g, '');
+  name = code.match(/(interface|class|enum)((\s*?.*?)*?){/)[0].replace(/(interface|class|enum)| |{|\r?\n/g, '');
   return name;
 }

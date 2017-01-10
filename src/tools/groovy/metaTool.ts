@@ -10,11 +10,11 @@ export let getMetaes = (code: string, endValue: string, typeFilesMap?: { [key: s
   if (metaesStart < metaesEnd) {
     let fileName: string = utils.getObjectName(code);
     let metaBlocks: any = code.substring(metaesStart, metaesEnd);
-    metaBlocks = metaBlocks.match(/@((\s*?.*?)*?)\n/g);
+    metaBlocks = metaBlocks.match(/@((\s*?.*?)*?)\r?\n/g);
 
     metaes.pop();
     for (let meta of metaBlocks) {
-      meta = meta.replace(/\n|@/g, '');
+      meta = meta.replace(/\r?\n|@/g, '');
       if(!typeFilesMap[meta.toLowerCase()]){
         log.warning(`can't get ${ meta }'s package in file of ${ fileName }`);
       }else{

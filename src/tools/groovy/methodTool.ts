@@ -92,7 +92,7 @@ let getMethod = (methodCode: string) => {
         if (args[i].indexOf(' ') === 0) {
           methodArg.name = tmp[2];
         }
-        let docTmp = argsDoces[i].replace(/@param |\n/g, '').split('eg.');
+        let docTmp = argsDoces[i].replace(/@param |\r?\n/g, '').split('eg.');
         methodArg.doc = docTmp[0];
         if (docTmp.length === 2) {
           methodArg.eg = docTmp[1];

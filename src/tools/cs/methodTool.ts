@@ -22,7 +22,7 @@ export let getMethods = (code: string, typeFilesMap: { [key: string]: string }):
     throw new MissingMethodError(`${utils.getObjectName(code)}.cs`);
   }
 
-  methodCode = methodCode.replace(/{|}|\n/g, '');
+  methodCode = methodCode.replace(/{|}|\r?\n/g, '');
   let methodBlocks = methodCode.split(';');
   for (let block of methodBlocks) {
     if (block.replace(/ /g, '').length > 0) {
@@ -94,7 +94,7 @@ let getMethod = (methodCode: string) => {
         if (args[i].indexOf(' ') === 0) {
           methodArg.name = tmp[2];
         }
-        methodArg.doc = argsDoces[i].replace(/@param |\n/g, '');
+        methodArg.doc = argsDoces[i].replace(/@param |\r?\n/g, '');
         method.args.push(methodArg);
       }
     }

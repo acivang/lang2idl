@@ -32,7 +32,7 @@ export class Ducoment {
   getMethodReturnDoc(code: string): string {
     let doc: string;
 
-    let tempDoc = code.match(/\@return((\s*?.*?)*?)\n/);
+    let tempDoc = code.match(/\@return((\s*?.*?)*?)\r?\n/);
     if (tempDoc) {
       doc = tempDoc[0].replace(/@return |\r?\n/g, '');
     }
@@ -51,10 +51,10 @@ export class Ducoment {
   getMethodArgsDoc(code: string): string[] {
     let doc: string[] = [];
     doc.pop();
-    let doces = code.match(/\@param((\s*?.*?)*?)\n/g);
+    let doces = code.match(/\@param((\s*?.*?)*?)\r?\n/g);
     if (doces) {
       for (let item of doces) {
-        item = item.replace(/\n|\*| |@param/g, '');
+        item = item.replace(/\r?\n|\*| |@param/g, '');
         if (item && item.length !== 0) {
           doc.push(item);
         }

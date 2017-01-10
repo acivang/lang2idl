@@ -15,7 +15,7 @@ export let getMetaes = (code: string, endValue: string, typeFilesMap?: { [key: s
     metaes.pop();
     
     for (let meta of metaBlocks) {
-      meta = meta.replace(/\n|\[|\]/g, '');
+      meta = meta.replace(/\r?\n|\[|\]/g, '');
       if(!typeFilesMap[meta.toLowerCase()]){
         log.warning(`can't get ${ meta }'s namespace in file of ${ fileName }`);
       }else{

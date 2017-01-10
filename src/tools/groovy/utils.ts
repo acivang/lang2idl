@@ -9,7 +9,7 @@
  */
 export let getPackage = (code: string): string => {
   let name: string;
-  name = code.match(/package((\s*?.*?)*?)\n/)[0].replace(/package|\;| |\n/g, '');
+  name = code.match(/package((\s*?.*?)*?)\r?\n/)[0].replace(/package|\;| |\r?\n/g, '');
   return name;
 }
 
