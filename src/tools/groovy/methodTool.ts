@@ -2,7 +2,7 @@
 import * as struct from '../../utils/struct';
 import { Ducoment as Doc } from './docTool';
 import * as utils from './utils';
-import {TypeTool} from './typeTool';
+import { TypeTool } from './typeTool';
 import { MissingMethodError, MissingCommentError, CodeFormatError } from '../../utils/error';
 
 
@@ -66,7 +66,7 @@ let getMethod = (methodCode: string) => {
   if (argsTmp.length > 0) {
     let args = argsTmp.split(',');
     if (args.length !== argsDoces.length) {
-      throw new MissingCommentError(`method of "${method.name}"'s args in class of ${ this.className }`);
+      throw new MissingCommentError(`method of "${method.name}"'s args in class of ${this.className}`);
     }
     for (let i in args) {
       let methodArg: any = {
@@ -92,7 +92,11 @@ let getMethod = (methodCode: string) => {
         if (args[i].indexOf(' ') === 0) {
           methodArg.name = tmp[2];
         }
-        methodArg.doc = argsDoces[i].replace(/@param |\n/g, '');
+        let docTmp = argsDoces[i].replace(/@param |\n/g, '').split('eg.');
+        methodArg.doc = docTmp[0];
+        if (docTmp.length === 2) {
+          methodArg.eg = docTmp[1];
+        }
         method.args.push(methodArg);
       }
     }

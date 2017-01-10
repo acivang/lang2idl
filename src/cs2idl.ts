@@ -32,13 +32,18 @@ export function convert(path: string): void {
     if (fileName.endsWith('facade')) {
       facadeFiles.push(file);
 
-    } else if (osPath.dirname(file).endsWith('dto') || fileName.endsWith('dto')) {
+    } else {//if (osPath.dirname(file).endsWith('dto') || fileName.endsWith('dto')) {
 
       typeFiles.push(file);
       typeFilesMap[fileName] = file;
 
     }
 
+  }
+
+  if(facadeFiles.length === 0 && typeFiles.length === 0){
+    log.info(`there are not found any cs files!`);
+    return;
   }
 
   interfaceTools.typeFilesMap = typeFilesMap;
