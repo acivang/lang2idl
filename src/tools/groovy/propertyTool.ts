@@ -31,7 +31,7 @@ export let getPropertys = (code: string, typeFilesMap: { [key: string]: string }
 
   } else {// the object type is enum
     isEnum = true;
-    propertyBlocks = propertyCode.split(',');
+    propertyBlocks = propertyCode.split(/\,\r?\n/);
   }
   for (let block of propertyBlocks) {
     if (block.replace(/\n/g, '').length > 0) {
