@@ -83,6 +83,7 @@ export function toTsType(type: string): string {
 
 export function toLangType(type: string, lang: string): string {
   let langType = 'null';
+  type = type.toLowerCase();
   switch(lang){
     case 'groovy':
       langType = groovyTypeMap[type];
