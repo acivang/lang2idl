@@ -150,7 +150,7 @@ export class TypeTool {
             propertyCodes.push('\n/// <summary>')
             propertyCodes.push(`/// ${property.doc}`);
             propertyCodes.push('/// </summary>')
-            propertyCodes.push(`${property.name},`);
+            propertyCodes.push(`${property.name}`);
           }
         }
         typeCodes.push(usings.join('\n'));
@@ -162,10 +162,11 @@ export class TypeTool {
         }
         if (item.type === "class") {
           typeCodes.push(`class ${item.name}{`);
+        typeCodes.push(propertyCodes.join('\n'));
         } else if (item.type === "enum") {
           typeCodes.push(`enum ${item.name}{`);
+        typeCodes.push(propertyCodes.join(',\n'));
         }
-        typeCodes.push(propertyCodes.join('\n'));
         typeCodes.push("}");
         typeCodes.push("}");
 
