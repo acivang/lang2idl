@@ -149,7 +149,7 @@ export class TypeTool {
           for (let property of item.properties) {
             propertyCodes.push('\n/// <summary>')
             propertyCodes.push(`/// ${property.doc}`);
-            propertyCodes.push('///')
+            propertyCodes.push('/// </summary>')
             propertyCodes.push(`${property.name},`);
           }
         }
