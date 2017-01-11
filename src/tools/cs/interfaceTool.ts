@@ -119,7 +119,7 @@ export class InterfaceTool {
         interfaceCodes.push('/// </summary>')
       }
       interfaceCodes.push(`interface ${item.name}{`);
-      interfaceCodes.push(methodCode.join(";\n\n"));
+      interfaceCodes.push(methodCode.join("\n\n"));
       interfaceCodes.push(" }");
       interfaceCodes.push("}");
       let filePath: string = `${osPath.join(path, item.package.replace(/\./g, osPath.sep).toLowerCase(), item.name)}.cs`;
