@@ -57,13 +57,27 @@ export class InterfaceTool {
         doc.push(`/// ${method.doc}`);
         doc.push(`/// </summary>`);
         let namespaceName: string = "";
+        let methodReturn: any = method.return;
         for (let arg of method.args) {
           if (!arg.name) {
             break;
           }
           doc.push(`/// <param name='${arg.name}'>${arg.doc.replace(arg.name, '')}</param>`);
           if (arg.type.indexOf('.') < 0) {
-            args.push(`${dataType.toLangType(arg.type, 'cs')} ${arg.name}`);
+            if (arg.typeParams && arg.typeParams.length === 1) {
+              if (arg.typeParams[0].indexOf('.') < 0) {
+                args.push(`${dataType.toLangType(arg.type, 'cs')}<${arg.typeParams[0]}> ${arg.name}`);
+              } else {
+                namespaceName = arg.typeParams[0].substring(0, arg.typeParams[0].lastIndexOf(".")).toLowerCase();
+                if (!usingsMap[namespaceName]) {
+                  usingsMap[namespaceName] = true;
+                  usings.push(`using ${namespaceName};`);
+                }
+                args.push(`${dataType.toLangType(arg.type, 'cs')}<${arg.typeParams[0].substring(arg.typeParams[0].lastIndexOf(".") + 1)}> ${arg.name}`);
+              }
+            } else {
+              args.push(`${dataType.toLangType(arg.type, 'cs')} ${arg.name}`);
+            }
           } else {
             namespaceName = arg.type.substring(0, arg.type.lastIndexOf(".")).toLowerCase();
             if (!usingsMap[namespaceName]) {
@@ -73,25 +87,64 @@ export class InterfaceTool {
             args.push(` ${arg.type.substring(arg.type.lastIndexOf(".") + 1)} ${arg.name}`);
           }
         }
-        if (method.return.doc) {
-          doc.push(`/// <returns> ${method.return.doc}</returns>`);
+        if (methodReturn.doc) {
+          doc.push(`/// <returns> ${methodReturn.doc}</returns>`);
         }
 
         let methodLine: string;
-        if (method.return.type.indexOf(".") < 0) {
-          methodLine = `${dataType.toLangType(method.return.type, 'cs')} ${method.name}(${args.join(", ")});`;
+        if (methodReturn.type.indexOf(".") < 0) {
+          if (methodReturn.typeParams && methodReturn.typeParams.length === 1) {
+            if (methodReturn.typeParams[0].indexOf('.') < 0) {
+              methodLine = `${dataType.toLangType(methodReturn.type, 'cs')}<${methodReturn.typeParams[0]}> ${method.name}(${args.join(", ")});`;
+            } else {
+              namespaceName = methodReturn.typeParams[0].substring(0, methodReturn.typeParams[0].lastIndexOf(".")).toLowerCase();
+              if (!usingsMap[namespaceName]) {
+                usingsMap[namespaceName] = true;
+                usings.push(`using ${namespaceName};`);
+              }
+              methodLine = `${dataType.toLangType(methodReturn.type, 'cs')}<${methodReturn.typeParams[0].substring(methodReturn.typeParams[0].lastIndexOf(".") + 1)}> ${method.name}(${args.join(", ")});`;
+            }
+          }
+          else if (methodReturn.typeParams && methodReturn.typeParams.length === 2) {
+            let returnTypeParamsA: any;
+            let returnTypeParamsB: any;
+            if (methodReturn.typeParams[0].indexOf('.') > -1){
+              namespaceName = methodReturn.typeParams[0].substring(0, methodReturn.typeParams[0].lastIndexOf(".")).toLowerCase();
+              if (!usingsMap[namespaceName]) {
+                usingsMap[namespaceName] = true;
+                usings.push(`using ${namespaceName};`);
+              }
+              returnTypeParamsA = methodReturn.typeParams[0].substring(methodReturn.typeParams[0].lastIndexOf(".") + 1);
+            }else{
+              returnTypeParamsA = methodReturn.typeParams[0];
+            }
+            if (methodReturn.typeParams[1].indexOf('.') > -1){
+              namespaceName = methodReturn.typeParams[1].substring(0, methodReturn.typeParams[1].lastIndexOf(".")).toLowerCase();
+              if (!usingsMap[namespaceName]) {
+                usingsMap[namespaceName] = true;
+                usings.push(`using ${namespaceName};`);
+              }
+              returnTypeParamsB = methodReturn.typeParams[1].substring(methodReturn.typeParams[1].lastIndexOf(".") + 1);
+            }else{
+              returnTypeParamsB = methodReturn.typeParams[1];
+            }
+              methodLine = `${dataType.toLangType(methodReturn.type, 'cs')}<${returnTypeParamsA}, ${returnTypeParamsB}> ${method.name}(${args.join(", ")});`;
+          }
+          else {
+            methodLine = `${dataType.toLangType(methodReturn.type, 'cs')} ${method.name}(${args.join(", ")});`;
+          }
         } else {
-          namespaceName = method.return.type.substring(0, method.return.type.lastIndexOf(".")).toLowerCase();
+          namespaceName = methodReturn.type.substring(0, methodReturn.type.lastIndexOf(".")).toLowerCase();
           if (!usingsMap[namespaceName]) {
             usingsMap[namespaceName] = true;
             usings.push(`using ${namespaceName};`);
           }
           let typeParams: Array<string> = new Array();
-          if (method.return.typeParams) {
-            if (method.return.type.toLowerCase() === 'list' || method.return.type.toLowerCase() === 'dictionary') {
+          if (methodReturn.typeParams) {
+            if (methodReturn.type.toLowerCase() === 'list' || methodReturn.type.toLowerCase() === 'dictionary') {
               usings.push('System.Collections.Generic;');
             }
-            for (let typeParam of method.return.typeParams) {
+            for (let typeParam of methodReturn.typeParams) {
               if (typeParam.indexOf(".") > -1) {
                 namespaceName = typeParam.substring(0, typeParam.lastIndexOf(".")).toLowerCase();
                 typeParam = typeParam.substring(typeParam.lastIndexOf(".") + 1);
@@ -103,10 +156,10 @@ export class InterfaceTool {
               typeParams.push(typeParam);
             }
 
-            methodLine = `${method.return.type.substring(method.return.type.lastIndexOf(".") + 1)}<${typeParams.join(", ")}> ${method.name}(${args.join(", ")});`;
+            methodLine = `${methodReturn.type.substring(methodReturn.type.lastIndexOf(".") + 1)}<${typeParams.join(", ")}> ${method.name}(${args.join(", ")});`;
           } else {
 
-            methodLine = `${method.return.type.substring(method.return.type.lastIndexOf(".") + 1)} ${method.name}(${args.join(", ")});`;
+            methodLine = `${methodReturn.type.substring(methodReturn.type.lastIndexOf(".") + 1)} ${method.name}(${args.join(", ")});`;
           }
         }
         methodCode.push(`${doc.join('\n')}\n${methodLine}`)
