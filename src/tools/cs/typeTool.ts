@@ -91,7 +91,7 @@ export class TypeTool {
 
         if (item.type === "class") {
           for (let property of item.properties) {
-            property.type = property.type.toLowerCase();
+            property.type = property.type;
             propertyCodes.push('\n/// <summary>')
             propertyCodes.push(`/// ${property.doc}`);
             propertyCodes.push('/// <summary>')
