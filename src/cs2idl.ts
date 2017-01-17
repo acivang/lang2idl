@@ -71,12 +71,6 @@ export function convert(path: string): void {
     log.info(`idl json file had created: ${path}idl.json`);
   });
 
-  // jsonIdl = `export let jsonIdl = ${jsonIdl}`;
-
-  // filePath = osPath.join(path, 'idl.ts');
-  // fileStream.writeFile(filePath, jsonIdl, () => {
-  //   log.info(`idl ts file had created: ${path}idl.ts`);
-  // });
 }
 
 function getType(code: string): any {

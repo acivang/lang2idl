@@ -60,10 +60,6 @@ export function convert(path: string): void {
   fileStream.writeFileSync(filePath, jsonIdl);
   log.info(`idl json file had created: ${filePath}`);
 
-  // jsonIdl = `export let jsonIdl = ${jsonIdl}`;
-  // filePath = osPath.join(path, 'idl.ts');
-  // fileStream.writeFileSync(filePath, jsonIdl);
-  // log.info(`idl ts file had created: ${filePath}`)
 }
 
 
