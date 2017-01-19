@@ -38,7 +38,18 @@ export function convert(filePath: string): void {
   fileHelper.saveFile(path.join(dirname, '.npmignore'), npmignore.join('\n'));
 
   let mainFileValue: string = getInterfaces(code.interfaces, dirname);
+
+  let jsonName: string = `${npm.name.toLowerCase()}Json`;
+  if(npm.name.indexOf('-') > -1){
+    jsonName = `${npm.name.substring(npm.name.indexOf('-')+1).toLowerCase()}Json`;
+  }
+  let json = `export let ${jsonName} = ${JSON.stringify(code)};`;
+  filePath = path.join(dirname, `${jsonName}.ts`);
+  fileHelper.saveFile(filePath, json);
+
+  let importJson: string = `export * from './${jsonName}';`;
+  mainFileValue += '\n' + getTypes(code.types, dirname) + '\n' + importJson ;
   fileHelper.saveFile(path.join(dirname, 'main.ts'), mainFileValue);
-  getTypes(code.types, dirname);
+  
   log.info(`npm package had create at ${dirname}`);
 }

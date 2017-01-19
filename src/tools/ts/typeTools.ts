@@ -7,6 +7,7 @@ import { FileHelper } from '../../utils/files';
 let fileHelper = new FileHelper();
 
 export let getTypes = (types: any, path: string) => {
+  let mainImports: Array<string> = new Array();
   for (let item of types) {
     if (item.package) {
       let typeCodes: Array<string> = new Array();
@@ -34,11 +35,12 @@ export let getTypes = (types: any, path: string) => {
         }
       }
       typeCodes.push("}");
-      // typeCodes.push("}");
 
+      mainImports.push(`export * from './${item.package.replace(/\./g, osPath.sep)}/${item.name.toLowerCase()}';`);
       let directory: string = `${path}/${item.package.replace(/\./g, osPath.sep)}/`;
       fileHelper.saveFile(`${directory}${item.name.toLowerCase()}.ts`, typeCodes.join("\n"));
       log.info(`file had created: ${directory}${item.name}.ts.`);
     }
   }
+  return mainImports.join('\n');
 }
